@@ -1,0 +1,59 @@
+{
+  "name": "lane",
+  "version": "1.0.0",
+  "description": "Agent-native payments in Claude Code. Drives Lane's deterministic purchase flow — draft a purchase intent, approve it with a passkey, then let checkout-mcp autonomously complete the buy — over the hosted intent-mcp and checkout-mcp servers. Auto-installs the Lane CLI.",
+  "author": {
+    "name": "Lane",
+    "email": "agentic@getonlane.com",
+    "url": "https://getonlane.com"
+  },
+  "homepage": "https://getonlane.com/",
+  "repository": "https://github.com/Lane-Technologies-Inc/lane-plugin",
+  "license": "MIT",
+  "keywords": [
+    "payments",
+    "wallet",
+    "checkout",
+    "credentials",
+    "visa",
+    "agentic-commerce",
+    "mcp"
+  ],
+  "userConfig": {
+    "lane_api_key": {
+      "type": "string",
+      "title": "Lane API key",
+      "description": "Authenticates to the intent-mcp and checkout-mcp servers. Get one by running `lane-cli init` to log in (stored in ~/.lane/config.json as \"apiKey\"), or from the Lane dashboard. You can leave this blank now and set it later from /plugin after you log in.",
+      "sensitive": true,
+      "required": false
+    },
+    "lane_intent_mcp_url": {
+      "type": "string",
+      "title": "intent-mcp URL",
+      "description": "intent-mcp endpoint. Defaults to Lane staging (the only deployed environment today). Switch to https://mcp.getonlane.com/intent/mcp once production is live.",
+      "default": "https://mcp-staging.aws.getonlane.com/intent/mcp"
+    },
+    "lane_checkout_mcp_url": {
+      "type": "string",
+      "title": "checkout-mcp URL",
+      "description": "checkout-mcp endpoint. Defaults to Lane staging. Switch to https://mcp.getonlane.com/checkout/mcp once production is live.",
+      "default": "https://mcp-staging.aws.getonlane.com/checkout/mcp"
+    }
+  },
+  "mcpServers": {
+    "intent-mcp": {
+      "type": "http",
+      "url": "${user_config.lane_intent_mcp_url}",
+      "headers": {
+        "Authorization": "Bearer ${user_config.lane_api_key}"
+      }
+    },
+    "checkout-mcp": {
+      "type": "http",
+      "url": "${user_config.lane_checkout_mcp_url}",
+      "headers": {
+        "Authorization": "Bearer ${user_config.lane_api_key}"
+      }
+    }
+  }
+}
