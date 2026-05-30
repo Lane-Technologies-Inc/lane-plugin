@@ -1,9 +1,9 @@
 ---
 name: account-setup
-description: Agent-driven onboarding. The agent runs `lane-cli init`, then guides the user through the browser sign-up. The user never has to type a command themselves.
+description: Agent-driven onboarding. The agent runs `lane-cli init`, guides the user through the browser sign-up, then syncs the resulting API key into the plugin so the MCP servers use the same account. The user never types a command or pastes a key.
 metadata:
   display_name: Lane — Account Setup
-  version: 2.0.0
+  version: 2.1.0
 disable-model-invocation: true
 ---
 
@@ -32,7 +32,37 @@ The user signs up (or logs in) in the browser. The CLI shows a `Waiting for sign
 
 If the user closes the browser by accident, the CLI keeps spinning. The agent re-runs `lane-cli init`.
 
-## Step 3 — Chain into wallet setup if needed
+## Step 3 — Sync the API key into the plugin (no typing, no pasting)
+
+`lane-cli init` writes the user's account API key to `~/.lane/config.json`. The
+`intent-mcp` and `checkout-mcp` servers authenticate with that **same** key. If
+the plugin's key differs, the MCP servers resolve to a **different Lane account**
+than the CLI — and the approval page won't see the card the user enrolled. So
+the moment login succeeds, the agent copies the key into the plugin config.
+
+The plugin's API-key field is intentionally left **blank at install** — this
+step fills it. The agent runs the bundled sync script (it lives at
+`scripts/sync-api-key.mjs` in the plugin root — one level up from this skills
+directory; substitute this skill's base directory for `<plugin>`):
+
+```bash
+node "<plugin>/scripts/sync-api-key.mjs"
+```
+
+The script reads `~/.lane/config.json` and writes the key to
+`~/.claude/settings.json` under
+`pluginConfigs["lane@lane-cli"].options.lane_api_key` (idempotent — it preserves
+all other settings and no-ops if already in sync). Then tell the user:
+
+> _"Run `/reload-plugins` so Lane's payment servers reconnect with your account."_
+
+MCP servers read their auth header only when they connect, so the new key takes
+effect on the next `/reload-plugins` (or restart) — not mid-connection.
+
+> Run this step again any time the user re-runs `lane-cli init` or switches Lane
+> accounts, so the plugin always tracks the CLI's current login.
+
+## Step 4 — Chain into wallet setup if needed
 
 After successful sign-up, the CLI may prompt:
 

@@ -38,21 +38,25 @@ claude --plugin-dir /absolute/path/to/lane-plugin/plugins/lane
 
 ## After install
 
-1. Set your **Lane API key** in the plugin config (`/plugin` → configure →
-   `lane`). It authenticates the MCP servers. Get it from `lane-cli init`
-   (written to `~/.lane/config.json`) or the Lane dashboard.
+1. **Leave the API key blank at install.** The MCP servers authenticate with
+   your Lane API key, but you don't enter it by hand. When the agent runs
+   `lane-cli init` (browser login), the account-setup flow auto-copies the key
+   from `~/.lane/config.json` into the plugin config, then asks you to
+   `/reload-plugins`. This keeps the plugin and the CLI on the **same Lane
+   account** — set the key manually only to point at a different account.
 2. The `@getonlane/lane-cli` binary installs automatically on the first session
    (needs Node/npm on PATH). Works on macOS, Linux, and Windows — a Node
    dispatcher runs the matching install script (`.sh` / `.ps1`).
-3. Say what you want to buy. The agent handles login, wallet setup, intent
-   approval (one passkey tap), and checkout.
+3. Say what you want to buy. The agent handles login, key sync, wallet setup,
+   intent approval (one passkey tap), and checkout.
 
 ## Endpoints
 
 The intent-mcp and checkout-mcp URLs are baked into the plugin manifest and
 point at Lane **staging** (the only environment deployed today):
 `https://mcp-staging.aws.getonlane.com/intent/mcp` and `/checkout/mcp`. There is
-nothing to configure — only the API key is prompted. When production launches,
+nothing to configure at install — the API key is filled in automatically after
+`lane-cli init` (see step 1 above). When production launches,
 swap the `mcpServers` URLs in `plugins/lane/.claude-plugin/plugin.json` to
 `https://mcp.getonlane.com/{intent,checkout}/mcp`.
 

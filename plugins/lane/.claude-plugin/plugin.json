@@ -23,8 +23,7 @@
     "lane_api_key": {
       "type": "string",
       "title": "Lane API key",
-      "description": "Authenticates to the intent-mcp and checkout-mcp servers. Get one by running `lane-cli init` to log in (stored in ~/.lane/config.json as \"apiKey\"), or from the Lane dashboard. You can leave this blank now and set it later from /plugin after you log in.",
-      "sensitive": true,
+      "description": "Authenticates to the intent-mcp and checkout-mcp servers. Leave this BLANK at install — the Lane account-setup flow auto-fills it after you run `lane-cli init` (it copies the apiKey from ~/.lane/config.json so the MCP servers use the same account as your CLI). Only set it by hand if you want to point the plugin at a different account than your CLI login.",
       "required": false
     }
   },
