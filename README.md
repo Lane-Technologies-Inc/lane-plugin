@@ -49,9 +49,12 @@ claude --plugin-dir /absolute/path/to/lane-plugin/plugins/lane
 
 ## Endpoints
 
-Defaults target Lane **staging** (the only environment deployed today):
-`https://mcp-staging.aws.getonlane.com/intent/mcp` and `/checkout/mcp`.
-Override in plugin config for production.
+The intent-mcp and checkout-mcp URLs are baked into the plugin manifest and
+point at Lane **staging** (the only environment deployed today):
+`https://mcp-staging.aws.getonlane.com/intent/mcp` and `/checkout/mcp`. There is
+nothing to configure — only the API key is prompted. When production launches,
+swap the `mcpServers` URLs in `plugins/lane/.claude-plugin/plugin.json` to
+`https://mcp.getonlane.com/{intent,checkout}/mcp`.
 
 ## What's bundled
 
