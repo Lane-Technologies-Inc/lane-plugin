@@ -92,6 +92,14 @@ plugins/lane/
 └── README.md
 ```
 
+## Security
+
+Raw card numbers never reach Lane servers — cards are tokenized via
+[VGS](https://www.verygoodsecurity.com/) (aliases only, never the PAN), payment
+credentials are single-use, and every agent-initiated payment is gated by a
+passkey approval. Full details and how to report a vulnerability:
+[`SECURITY.md`](./SECURITY.md).
+
 ## License
 
 MIT
