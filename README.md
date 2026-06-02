@@ -1,13 +1,20 @@
-# Lane plugin for Claude Code
+# Lane for Claude Code
 
-A downloadable [Claude Code](https://code.claude.com) plugin that turns your
-agent into an agentic-commerce buyer: it drafts a purchase intent, you approve
-it with a passkey, and Lane's `checkout-mcp` autonomously completes the
-purchase. Bundles the Lane skills, the `intent-mcp` + `checkout-mcp` servers,
+**The official Lane plugin for Claude Code**, published by
+[Lane Technologies](https://getonlane.com). It turns your agent into an
+agentic-commerce buyer: it drafts a purchase intent, you approve it with a
+passkey, and Lane's `checkout-mcp` autonomously completes the purchase at the
+merchant. Bundles the Lane skills, the `intent-mcp` + `checkout-mcp` servers,
 and an auto-installer for the `@getonlane/lane-cli` binary.
 
-This repository is also a **plugin marketplace** named `lane-cli` containing one
-plugin, `lane`.
+> **Provenance.** This repo — `github.com/Lane-Technologies-Inc/lane-plugin` —
+> is Lane's official distribution for the plugin. It is not listed in any public
+> plugin directory; you install it by pointing Claude Code straight at this
+> repo. `/plugin marketplace add` simply reads the manifest from here — it does
+> not publish anything or pull from an app store.
+
+This repository is also a Claude Code **plugin marketplace** named `lane-cli`
+containing one plugin, `lane`.
 
 ## Install
 
@@ -59,6 +66,21 @@ nothing to configure at install — the API key is filled in automatically after
 `lane-cli init` (see step 1 above). When production launches,
 swap the `mcpServers` URLs in `plugins/lane/.claude-plugin/plugin.json` to
 `https://mcp.getonlane.com/{intent,checkout}/mcp`.
+
+## Trust & provenance
+
+On install, Claude Code asks you to approve two things this plugin ships — both
+expected, and both defined in plain sight in this repo:
+
+- a **SessionStart hook** (`plugins/lane/hooks/install-check.mjs`) that installs
+  the `@getonlane/lane-cli` binary via npm, and
+- two **MCP servers** (`intent-mcp`, `checkout-mcp`, declared in
+  `plugins/lane/.claude-plugin/plugin.json`) that make authenticated calls to
+  Lane's hosted endpoints.
+
+Because the plugin handles real payment credentials, review both before
+approving if you like — that's the whole point of installing from Lane's own
+repository rather than a third party.
 
 ## What's bundled
 
