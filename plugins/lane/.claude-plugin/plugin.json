@@ -1,6 +1,5 @@
 {
   "name": "lane",
-  "version": "1.0.0",
   "description": "Agent-native payments in Claude Code. Drives Lane's deterministic purchase flow — draft a purchase intent, approve it with a passkey, then let checkout-mcp autonomously complete the buy — over the hosted intent-mcp and checkout-mcp servers. Auto-installs the Lane CLI.",
   "author": {
     "name": "Lane",
