@@ -1,0 +1,40 @@
+{
+  "name": "lane-cli",
+  "owner": {
+    "name": "Lane",
+    "email": "agentic@getonlane.com"
+  },
+  "metadata": {
+    "description": "Agent-native payment credentials that work today."
+  },
+  "plugins": [
+    {
+      "name": "lane",
+      "source": "./plugins/lane",
+      "description": "Agent-native payments in Claude Code: draft a purchase intent, approve it with a passkey, then let Lane drive the merchant checkout autonomously. Bundles the Lane skills + the single lane-mcp server, and auto-installs the Lane CLI.",
+      "author": {
+        "name": "Lane"
+      },
+      "homepage": "https://getonlane.com/",
+      "repository": "https://github.com/Lane-Technologies-Inc/lane-plugin",
+      "license": "MIT",
+      "category": "finance",
+      "tags": [
+        "payments",
+        "wallet",
+        "checkout",
+        "credentials",
+        "visa",
+        "agentic-commerce"
+      ],
+      "keywords": [
+        "payments",
+        "wallet",
+        "checkout",
+        "credentials",
+        "visa",
+        "agentic-commerce"
+      ]
+    }
+  ]
+}
