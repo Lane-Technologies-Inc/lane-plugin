@@ -29,8 +29,8 @@
     }
   },
   "logo": {
-    "light": "https://assets.getonlane.com/brand/lane-lockup-white.svg",
-    "dark": "https://assets.getonlane.com/brand/lane-lockup-black.svg",
+    "light": "/logo/lane-lockup-black.svg",
+    "dark": "/logo/lane-lockup-white.svg",
     "href": "https://getonlane.com"
   },
   "favicon": "/favicon.svg",
