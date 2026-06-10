@@ -135,18 +135,16 @@
   },
   "contextual": {
     "options": [
-      "download-spec",
-      "chatgpt",
-      "claude",
-      "perplexity",
-      "grok",
-      "aistudio",
-      "mcp",
-      "add-mcp",
-      "cursor",
       "copy",
       "view",
-      "assistant"
+      "download-spec",
+      "download-pdf",
+      "assistant",
+      "chatgpt",
+      "claude",
+      "mcp",
+      "add-mcp",
+      "cursor"
     ],
     "display": "header"
   }
