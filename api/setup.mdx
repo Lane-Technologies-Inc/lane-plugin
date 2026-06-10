@@ -1,20 +1,18 @@
 ---
 title: One-time setup
-description: "Done once, not per order: add a payment method, set a spending authorization, and get your API key and webhook secret."
+description: "Done once, not per order: create your account, add a card, and get your API key and webhook secret."
 ---
 
-Before your first call, complete a short setup at the link Lane gives you. This
-happens **once** — not per order.
+Before your first call, complete a short setup in the Lane wallet. This happens
+**once** — not per order.
 
 <Steps>
-  <Step title="Add a payment method">
+  <Step title="Create your account">
+    Sign up at [wallet.getonlane.com/home](https://wallet.getonlane.com/home).
+  </Step>
+  <Step title="Add a card">
     This is the card every order will be charged to. Card data goes directly to
     our payment vault and never touches your servers or ours in raw form.
-  </Step>
-  <Step title="Set a spending authorization">
-    A per-order cap and an optional monthly ceiling. Orders that would exceed
-    your authorization are paused (see [`needs_input`](/api/needs-input)) rather
-    than charged.
   </Step>
   <Step title="Get your API key and webhook secret">
     The key authenticates every request. The secret lets you
@@ -23,21 +21,23 @@ happens **once** — not per order.
 </Steps>
 
 After setup, every order is a single headless call. There is no per-order
-approval step and nothing for an end user to tap or confirm.
+approval step and nothing for an end user to tap or confirm. Per-order spend is
+bounded by the [`max_price`](/api/create-order) you send on each request.
 
 <Warning>
-  Your API key spends from one wallet (the payment method you enrolled). Treat it
-  like a secret: anyone holding it can place orders against your authorization.
+  Your API key spends from one wallet (the card you enrolled). Treat it like a
+  secret: anyone holding it can place orders against that wallet.
 </Warning>
 
 ## Pilot checklist
 
 <Steps>
-  <Step title="Receive your credentials">
-    Lane gives you an API key, a webhook secret, and the one-time setup link.
+  <Step title="Create your account & add a card">
+    Sign up at [wallet.getonlane.com/home](https://wallet.getonlane.com/home) and
+    enroll the card every order will be charged to.
   </Step>
-  <Step title="Complete setup">
-    Add the payment method and set your spending authorization.
+  <Step title="Get your API key and webhook secret">
+    From the wallet — the key authenticates requests, the secret verifies webhooks.
   </Step>
   <Step title="Stand up your webhook receiver">
     And [verify signatures](/api/webhooks#verifying-signatures).

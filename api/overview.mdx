@@ -60,9 +60,10 @@ no difference on our side, and there is no cold-start penalty.
 The Order API is the **headless** way to use Lane — for an agent or app running
 on its own. Where the [Lane Plugin](/plugin/installation) is interactive (an
 agent and a person sharing a surface, the person approving each purchase with a
-passkey), the Order API is pre-authorized: you set a payment method and a
-spending authorization once, and every order after that is a single
-server-to-server call your workflow makes with no per-order approval.
+passkey), the Order API is pre-authorized: you enroll a card once, and every
+order after that is a single server-to-server call your workflow makes — no
+per-order approval, with spend bounded by the `max_price` you send on each
+request.
 
 <Note>
   Under the hood, an order is one merchant checkout — a *mandate* — and your
@@ -75,7 +76,7 @@ server-to-server call your workflow makes with no per-order approval.
 
 <CardGroup cols={2}>
   <Card title="One-time setup" icon="gear" href="/api/setup">
-    Add a payment method, set a spending authorization, get your keys.
+    Create your account, add a card, get your API key and webhook secret.
   </Card>
   <Card title="Quickstart" icon="bolt" href="/api/quickstart">
     Place your first order from a backend worker.

@@ -28,6 +28,11 @@
       "format": "woff2"
     }
   },
+  "logo": {
+    "light": "https://assets.getonlane.com/brand/lane-wordmark-white.svg",
+    "dark": "https://assets.getonlane.com/brand/lane-wordmark-blue.svg",
+    "href": "https://getonlane.com"
+  },
   "favicon": "/favicon.svg",
   "navigation": {
     "tabs": [

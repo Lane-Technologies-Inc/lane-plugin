@@ -34,7 +34,7 @@ own**.
 | -------------------------- | ----------------------------------------------- | -------------------------------------------------- |
 | **Who interacts with it**  | An agent **and** an end-user, together          | An agent or app, on its own, inside a workflow     |
 | **Human in the loop**      | Yes — the person approves every purchase        | No per-order approval — spend is pre-authorized    |
-| **Approval**               | Passkey tap in the browser, each time           | A one-time payment method + spending authorization |
+| **Approval**               | Passkey tap in the browser, each time           | A one-time enrolled card; per-order `max_price` cap |
 | **Surface**                | The agent's environment (Claude Code today)     | HTTPS API + webhooks                               |
 | **Latency model**          | Conversational, live                            | Asynchronous (an order takes a few minutes)        |
 | **Best for**               | Open-ended, hands-on purchasing with a person   | Embedding checkout into an automated workflow at scale |

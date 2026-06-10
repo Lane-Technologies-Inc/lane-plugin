@@ -22,9 +22,9 @@ touches Lane's servers, on both surfaces.
     into long-lived chat history.
   </Card>
   <Card title="Spend is always bounded" icon="shield-check">
-    Every purchase is bounded by an authorization the buyer sets — a per-purchase
-    ceiling in the plugin (gated by a passkey), or a per-order cap plus an optional
-    monthly ceiling in the [Order API](/api/setup).
+    Every purchase is bounded by a ceiling the buyer sets — a per-purchase
+    ceiling in the plugin (gated by a passkey), or the per-order `max_price` sent
+    on each [Order API](/api/create-order) request.
   </Card>
 </CardGroup>
 
@@ -33,7 +33,7 @@ touches Lane's servers, on both surfaces.
 | Surface                                       | Approval gate                                                                  |
 | --------------------------------------------- | ------------------------------------------------------------------------------ |
 | [Claude Code Plugin](/plugin/purchase-flow)   | A FIDO passkey / biometric ceremony in the browser on **every** purchase. The agent cannot mint a credential without that human approval. |
-| [Order API](/api/setup)            | A one-time payment method + spending authorization. No per-order tap; orders that would exceed the authorization are paused, not charged. |
+| [Order API](/api/setup)            | A one-time enrolled card; spend is bounded per order by `max_price`. No per-order tap; orders that would exceed the limit are paused, not charged. |
 
 ## What the plugin executes on your machine
 

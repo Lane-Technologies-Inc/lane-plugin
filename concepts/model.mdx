@@ -68,9 +68,9 @@ The model is the same; each surface uses the word its user works with.
   </Card>
   <Card title="Order API" icon="code" href="/api/overview">
     Programmatic — an agent or app in a workflow. Speaks in **orders**: each
-    `POST /orders` call is one merchant checkout (a mandate); the standing
-    **spending authorization** you set during setup is the intent-level budget.
-    See the [overview](/api/overview).
+    `POST /orders` call is one merchant checkout (a mandate), bounded by the
+    `max_price` you send; the enrolled card is the funding source. See the
+    [overview](/api/overview).
   </Card>
 </CardGroup>
 
