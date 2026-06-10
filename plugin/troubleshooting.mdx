@@ -37,12 +37,13 @@ step. Each code has a single correct action — the agent never silently retries
 
 <AccordionGroup>
   <Accordion title="PREFLIGHT_TOKEN_REVOKED">
-    The card's agentic token isn't active. Re-run `lane-cli wallet enable-agentic
-    <last4>`, then re-approve the purchase.
+    The card's agentic token isn't active. Re-run
+    `lane-cli wallet enable-agentic <last4>`, then re-approve the purchase.
   </Accordion>
   <Accordion title="PREFLIGHT_DEVICE_NOT_BOUND">
-    The passkey ceremony never completed for this card. Run `lane-cli wallet
-    enable-agentic <last4>` and wait for it to land, then re-approve.
+    The passkey ceremony never completed for this card. Run
+    `lane-cli wallet enable-agentic <last4>` and wait for it to land, then
+    re-approve.
   </Accordion>
   <Accordion title="PREFLIGHT_VELOCITY">
     Too many recent attempts on this card. Wait the cooldown printed in the
@@ -63,8 +64,9 @@ step. Each code has a single correct action — the agent never silently retries
     The intent is past its window and can't be revived. Re-draft the purchase.
   </Accordion>
   <Accordion title="MANDATE_ALREADY_USED">
-    That merchant's checkout already completed. Run `lane-cli intent status
-    <lint_*>` to find the next pending mandate; don't retry the used one.
+    That merchant's checkout already completed. Run
+    `lane-cli intent status <lint_*>` to find the next pending mandate; don't
+    retry the used one.
   </Accordion>
   <Accordion title="MCC_BLOCKED">
     The merchant's category is on Lane's high-risk blocklist. The purchase stops
