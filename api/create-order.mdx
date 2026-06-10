@@ -13,7 +13,7 @@ POST /agent/v1/orders HTTP/1.1
 Host: api.getonlane.com
 Authorization: Bearer lane_...
 Content-Type: application/json
-Idempotency-Key: maive-approval-9c1f2a
+Idempotency-Key: acme-approval-9c1f2a
 
 {
   "instruction": "Buy a Yeti Tundra 45 hard cooler in tan at Amazon",
@@ -31,13 +31,13 @@ Idempotency-Key: maive-approval-9c1f2a
   },
   "gift": {
     "is_gift": true,
-    "note": "Thank you for trusting us with your roof. - The Maive Team"
+    "note": "Thanks for being a customer. — The Acme Team"
   },
   "metadata": {
-    "maive_order_id": "M-44821",
-    "roofer": "Dallas North crew"
+    "acme_order_id": "M-44821",
+    "team": "Field crew A"
   },
-  "callback_url": "https://hooks.maive.com/lane"
+  "callback_url": "https://hooks.acme.com/lane"
 }
 ```
 </RequestExample>

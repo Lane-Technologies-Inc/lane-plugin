@@ -1,0 +1,109 @@
+/* Lane brand styling — extends docs.json colors/fonts to match the Lane design system.
+   At Aero (body/headings) is loaded via docs.json; JetBrains Mono (code, values,
+   labels) + component tweaks live here. See lane-design-guidelines.md. */
+
+/* ---- JetBrains Mono: values, statuses, code ---- */
+@font-face {
+  font-family: "JetBrains Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/jetbrains-mono-regular.woff2") format("woff2");
+}
+@font-face {
+  font-family: "JetBrains Mono";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("/fonts/jetbrains-mono-medium.woff2") format("woff2");
+}
+@font-face {
+  font-family: "JetBrains Mono";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/fonts/jetbrains-mono-bold.woff2") format("woff2");
+}
+
+:root {
+  --lane-blue: #1201ff;
+  --lane-smoke: #f6f6f6;
+  --lane-black: #000000;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+/* All monospace surfaces use JetBrains Mono */
+code,
+pre,
+kbd,
+samp,
+tt,
+.font-mono,
+[class*="code"],
+[class*="Code"] {
+  font-family: var(--font-mono) !important;
+  font-feature-settings: "calt" 1, "liga" 0;
+}
+
+/* Inline code: smoke-white chip, brand-tinted, soft corners */
+:not(pre) > code {
+  background-color: var(--lane-smoke) !important;
+  color: var(--lane-black) !important;
+  border-radius: 0.5rem !important;
+  padding: 0.1rem 0.4rem !important;
+  font-size: 0.85em !important;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.dark :not(pre) > code {
+  background-color: rgba(255, 255, 255, 0.06) !important;
+  color: #e8e8e8 !important;
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+/* Code blocks: soft corners to match cards */
+pre {
+  border-radius: 0.75rem !important;
+}
+
+/* ---- Buttons: pill-shaped, uppercase mono labels (Lane convention) ---- */
+button,
+a[role="button"],
+[class*="Button"]:not([class*="copy"]):not([class*="Copy"]) {
+  border-radius: 9999px !important;
+}
+
+/* Primary navbar CTA — pill, uppercase mono, tracked */
+#navbar a[href*="getonlane.com"],
+header a[href*="getonlane.com"] {
+  font-family: var(--font-mono) !important;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 700;
+  border-radius: 9999px !important;
+}
+
+/* ---- Cards & surfaces: rounded-xl, light-grey border ---- */
+[class*="card"],
+[class*="Card"] {
+  border-radius: 0.75rem !important;
+}
+
+/* Tables: soft corners, light borders */
+table {
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+
+/* Eyebrows / section labels lean mono+uppercase like the dashboard */
+.eyebrow,
+[class*="eyebrow"] {
+  font-family: var(--font-mono) !important;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* Links: brand blue with offset underline (matches editorial spec) */
+.prose a:not([class*="button"]):not([class*="card"]):not([class*="Card"]) {
+  text-underline-offset: 2px;
+}

@@ -9,45 +9,49 @@ add to cart, sign in if needed, pay, confirm) and reports back. Raw card numbers
 never reach Lane — cards are tokenized, payment credentials are single-use, and
 every purchase is bounded by an authorization the buyer sets.
 
-There are two ways to use Lane, built on the same payment rails.
+There are two ways to use Lane, built on the same payment rails — one for an
+**agent and a person working together**, one for an **agent or app running on its
+own**.
 
 <CardGroup cols={2}>
-  <Card title="Claude Code Plugin" icon="terminal" href="/plugin/installation">
-    Interactive purchasing inside Claude Code. The agent drafts a purchase, the
-    person approves it with a **passkey tap**, and Lane drives the merchant
-    checkout autonomously. Best when a human is in the loop on each purchase.
+  <Card title="Lane Plugin" icon="terminal" href="/plugin/installation">
+    An **interactive** payment surface a person and their agent share. The agent
+    drafts a purchase, the person approves it with a **passkey tap**, and Lane
+    drives the merchant checkout. Agent-agnostic and general-purpose — point it at
+    anything you want to buy. Distributed today as a Claude Code plugin.
   </Card>
-  <Card title="Managed Checkout API" icon="code" href="/api/overview">
-    Headless, server-to-server checkout. One `POST /orders` call with a
-    plain-language instruction and a ship-to address; Lane works the order in the
-    background and notifies you by webhook. Best for autonomous, pre-authorized
-    purchasing at scale.
+  <Card title="Order API" icon="code" href="/api/overview">
+    A **programmatic** checkout endpoint that an agent or app calls as a step in a
+    workflow. One `POST /orders` with a plain-language instruction and a ship-to
+    address; Lane works the order in the background and notifies you by webhook.
+    No human in the loop per order — spend is pre-authorized.
   </Card>
 </CardGroup>
 
 ## Which one do I want?
 
-|                         | Claude Code Plugin                          | Managed Checkout API                              |
-| ----------------------- | ------------------------------------------- | ------------------------------------------------- |
-| **Who drives it**       | A person working alongside an agent         | Your backend / an autonomous agent                |
-| **Approval per purchase** | Passkey tap in the browser, every time    | None per order — spend is pre-authorized          |
-| **Surface**             | Claude Code (CLI, desktop, IDE)             | HTTPS API + webhooks                              |
-| **Latency model**       | Conversational, live                        | Asynchronous (an order takes a few minutes)       |
-| **Best for**            | Hands-on shopping, exploration, demos       | Programmatic, high-volume, unattended purchasing  |
+|                            | Lane Plugin                                     | Order API                                          |
+| -------------------------- | ----------------------------------------------- | -------------------------------------------------- |
+| **Who interacts with it**  | An agent **and** an end-user, together          | An agent or app, on its own, inside a workflow     |
+| **Human in the loop**      | Yes — the person approves every purchase        | No per-order approval — spend is pre-authorized    |
+| **Approval**               | Passkey tap in the browser, each time           | A one-time payment method + spending authorization |
+| **Surface**                | The agent's environment (Claude Code today)     | HTTPS API + webhooks                               |
+| **Latency model**          | Conversational, live                            | Asynchronous (an order takes a few minutes)        |
+| **Best for**               | Open-ended, hands-on purchasing with a person   | Embedding checkout into an automated workflow at scale |
 
-Both surfaces share one model — purchases are organized as an **intent** (the
-authorization) and its **mandates** (each a single merchant checkout). The
-[shared concepts page](/concepts/model) explains it once; you don't need it to
-get started.
+Both share one model — purchases are organized as an **intent** (the
+authorization) and its **mandates** (each a single merchant checkout, an
+"order"). The [shared concepts page](/concepts/model) explains it once; you don't
+need it to get started.
 
 ## Get started
 
 <CardGroup cols={2}>
   <Card title="Install the plugin" icon="download" href="/plugin/installation">
-    Add Lane to Claude Code and make your first purchase.
+    Add Lane to your agent and make your first purchase with a person in the loop.
   </Card>
-  <Card title="Call the API" icon="bolt" href="/api/quickstart">
-    Place your first order from a backend worker in a few lines of Python.
+  <Card title="Call the Order API" icon="bolt" href="/api/quickstart">
+    Place your first order from a backend worker or agent in a few lines of Python.
   </Card>
   <Card title="How Lane keeps cards safe" icon="shield" href="/security/overview">
     Tokenization, single-use credentials, and the approval gate.

@@ -24,7 +24,7 @@ def place_gift_order(approval_id: str, instruction: str, max_price: str,
         "max_price": max_price,
         "ship_to": recipient,
         "gift": {"is_gift": True, "note": gift_note},
-        "metadata": {"maive_order_id": approval_id},
+        "metadata": {"acme_order_id": approval_id},
     }).encode()
     req = urllib.request.Request(
         f"{LANE_API}/orders",
@@ -52,7 +52,7 @@ def handle_lane_webhook(event):
     e = json.loads(raw)
     if e["type"] == "order.completed":
         d = e["data"]
-        mark_gift_sent(d["metadata"]["maive_order_id"], d["order_number"], d["amount_charged"])
+        mark_gift_sent(d["metadata"]["acme_order_id"], d["order_number"], d["amount_charged"])
     elif e["type"] == "order.failed":
         notify_slack(f"Lane could not place order {e['data']['order_id']}")
     elif e["type"] == "order.needs_input":

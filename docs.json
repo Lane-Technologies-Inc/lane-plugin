@@ -51,7 +51,7 @@
         ]
       },
       {
-        "tab": "Claude Code Plugin",
+        "tab": "Lane Plugin",
         "groups": [
           {
             "group": "Plugin",
@@ -76,7 +76,7 @@
         ]
       },
       {
-        "tab": "Managed Checkout API",
+        "tab": "Order API",
         "groups": [
           {
             "group": "Guides",

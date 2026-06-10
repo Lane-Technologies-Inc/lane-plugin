@@ -7,7 +7,7 @@ Send an `Idempotency-Key` header on every create. Use a stable ID from your side
 (your approval ID is ideal):
 
 ```http
-Idempotency-Key: maive-approval-9c1f2a
+Idempotency-Key: acme-approval-9c1f2a
 ```
 
 If a request is retried with the same key within 24 hours, Lane returns the

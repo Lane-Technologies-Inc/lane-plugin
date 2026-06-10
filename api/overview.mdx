@@ -1,11 +1,14 @@
 ---
-title: Managed Checkout API
-description: "Buy anything from any merchant with one API call. You send a plain-language instruction plus where to ship it; Lane runs the full checkout on our servers and reports back."
+title: Order API
+description: "Buy anything from any merchant with one API call. An agent or app sends a plain-language instruction plus where to ship it; Lane runs the full checkout on our servers and reports back."
 ---
 
-**Buy anything from any merchant with one API call. Lane handles the rest.**
+**Buy anything from any merchant with one API call — a step an agent or app
+drops into a workflow. Lane handles the rest.**
 
-You send a plain-language instruction plus where to ship it. Lane runs the full
+The Order API is the **programmatic** way to use Lane: your agent or backend
+calls it as part of an automated flow, with no human in the loop per order. You
+send a plain-language instruction plus where to ship it. Lane runs the full
 checkout on our servers — find the product, add to cart, sign in if needed, pay,
 confirm — and reports back when the order is placed. No browser automation, no
 merchant integrations, and no payment handling on your side.
@@ -50,11 +53,12 @@ no difference on our side, and there is no cold-start penalty.
 
 ## How it relates to the plugin
 
-This API is the **headless** way to use Lane. Where the [Claude Code
-plugin](/plugin/installation) puts a person in the loop with a passkey on every
-purchase, the API is pre-authorized: you set a payment method and a spending
-authorization once, and every order after that is a single server-to-server call
-with no per-order approval.
+The Order API is the **headless** way to use Lane — for an agent or app running
+on its own. Where the [Lane Plugin](/plugin/installation) is interactive (an
+agent and a person sharing a surface, the person approving each purchase with a
+passkey), the Order API is pre-authorized: you set a payment method and a
+spending authorization once, and every order after that is a single
+server-to-server call your workflow makes with no per-order approval.
 
 <Note>
   Under the hood, an order is one merchant checkout — a *mandate* — and your

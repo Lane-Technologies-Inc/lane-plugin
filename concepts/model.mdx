@@ -4,7 +4,7 @@ description: "The one model both Lane surfaces share: an intent is the authoriza
 ---
 
 Every purchase Lane makes is organized the same way, whether it comes from the
-Claude Code plugin or the Managed Checkout API. Three terms describe it.
+Claude Code plugin or the Order API. Three terms describe it.
 
 ## The model
 
@@ -61,20 +61,21 @@ the order is that checkout being run.**
 The model is the same; each surface uses the word its user works with.
 
 <CardGroup cols={2}>
-  <Card title="Claude Code Plugin" icon="terminal" href="/plugin/purchase-flow">
-    Speaks in **intents and mandates**. The buyer authorizes an intent with a
-    passkey; Lane then checks out each mandate. See the
-    [purchase flow](/plugin/purchase-flow).
+  <Card title="Lane Plugin" icon="terminal" href="/plugin/purchase-flow">
+    Interactive — an agent and a person together. Speaks in **intents and
+    mandates**: the person authorizes an intent with a passkey, and Lane checks
+    out each mandate. See the [purchase flow](/plugin/purchase-flow).
   </Card>
-  <Card title="Managed Checkout API" icon="code" href="/api/overview">
-    Speaks in **orders**. Each `POST /orders` call is one merchant checkout (a
-    mandate); the standing **spending authorization** you set during setup is the
-    intent-level budget. See the [API overview](/api/overview).
+  <Card title="Order API" icon="code" href="/api/overview">
+    Programmatic — an agent or app in a workflow. Speaks in **orders**: each
+    `POST /orders` call is one merchant checkout (a mandate); the standing
+    **spending authorization** you set during setup is the intent-level budget.
+    See the [overview](/api/overview).
   </Card>
 </CardGroup>
 
 <Note>
-  The Managed Checkout API exposes orders and an account-level spending
+  The Order API exposes orders and an account-level spending
   authorization directly — you don't create an `intent` object by hand. The
   authorization is the intent; each order is a mandate.
 </Note>
