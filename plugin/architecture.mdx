@@ -1,0 +1,71 @@
+---
+title: Architecture
+description: "What the plugin ships — skills, SessionStart hooks, and the hosted lane-mcp server — and how the pieces fit together."
+---
+
+The plugin is small and transparent. Everything it ships is visible in the
+[repository](https://github.com/Lane-Technologies-Inc/lane-plugin).
+
+```
+plugins/lane/
+├── .claude-plugin/plugin.json   # manifest: userConfig + the lane-mcp server
+├── skills/                      # lane router + setup sub-skills
+├── hooks/                       # SessionStart: auto-install + skill freshness
+├── scripts/sync-api-key.mjs     # copies the CLI's API key into plugin config
+└── README.md
+```
+
+## Components
+
+<CardGroup cols={2}>
+  <Card title="Skills" icon="book">
+    The deterministic purchase flow (`lane`) plus two setup sub-skills
+    (`account-setup`, `wallet-setup`). See the [skills
+    reference](/plugin/reference/skills).
+  </Card>
+  <Card title="MCP server" icon="server">
+    One hosted server, `lane-mcp`, that drafts and approves a purchase and then
+    drives the autonomous checkout. Wired in automatically — no `claude mcp add`
+    needed. See the [MCP tools](/plugin/reference/mcp-tools).
+  </Card>
+  <Card title="Auto-install hook" icon="download">
+    A SessionStart hook installs the `@getonlane/lane-cli` binary via npm on the
+    first session if it isn't on your PATH.
+  </Card>
+  <Card title="Key sync" icon="key">
+    `scripts/sync-api-key.mjs` keeps the plugin and CLI on the same Lane account.
+    See [configuration](/plugin/reference/configuration).
+  </Card>
+</CardGroup>
+
+## The hooks
+
+Two hooks run at SessionStart (matchers: `startup`, `clear`, `compact`). Both are
+idempotent and never block a session.
+
+| Hook                  | What it does                                                                                                   |
+| --------------------- | -------------------------------------------------------------------------------------------------------------- |
+| **install-check.mjs** | Checks whether `lane-cli` is on PATH; if not, routes to the matching OS installer (`.sh` on macOS/Linux, `.ps1` on Windows). Always exits 0. |
+| **skill-freshness.mjs** | Disables any legacy standalone copies of Lane skills that would shadow the plugin's, moving them aside so the bundled skills win. Silent on the common path. |
+
+## How a purchase travels through the pieces
+
+```
+You ─▶ lane skill ─▶ lane-cli wallet ls        (am I set up?)
+                  ─▶ lane-mcp: intent_submit    (draft the intent)
+                  ─▶ browser passkey tap        (authorize)
+                  ─▶ lane-mcp: start_session    (Lane drives the merchant checkout)
+                  ─▶ lane-mcp: get_session_status / resume_session
+                  ─▶ result back to you
+```
+
+The CLI handles local account and wallet operations; `lane-mcp` (hosted) handles
+drafting, authorization, and the autonomous checkout. The agent orchestrates —
+it never drives the merchant browser itself.
+
+## Card data never touches the plugin
+
+Cards are entered into a hosted vault and tokenized; the plugin and `lane-mcp`
+only ever handle aliases, never the raw card number. Payment credentials are
+single-use and bounded by the authorization you approved. Full detail in
+[Security](/security/overview).

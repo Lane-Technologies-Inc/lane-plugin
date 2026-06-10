@@ -1,0 +1,88 @@
+---
+title: lane-mcp tools
+description: "The hosted lane-mcp server's tools — drafting and approving a purchase, then driving the autonomous checkout."
+---
+
+The interactive purchase flow runs entirely through the hosted **`lane-mcp`**
+server. It has two halves: the **intent** tools (draft + approve) and the
+**checkout** tools (drive the purchase). The agent calls these; they're listed
+here for reference.
+
+## Intent tools — draft and approve
+
+### `intent_submit`
+
+```
+mcp__lane-mcp__intent_submit({ prompt, session_id? })
+```
+
+Drafts or refines a purchase from a natural-language prompt. Returns one of:
+
+| Result          | Meaning                                                                          |
+| --------------- | -------------------------------------------------------------------------------- |
+| `needs_info`    | A clarification is needed. Re-submit with the same `session_id` and the answer.  |
+| `draft_ready`   | A structured plan plus an `approval_url` and the mandate details.                |
+| `complete`      | Authorized — returns the `lint_*` intent id.                                     |
+
+Save the returned `session_id`; every follow-up call uses it.
+
+### `intent_get_status`
+
+```
+mcp__lane-mcp__intent_get_status({ session_id })
+```
+
+Read-only poll after sharing the approval link. Returns the same shape as
+`intent_submit`; flips to `complete` once you finish the passkey ceremony in the
+browser. Preferred over re-submitting because it won't accidentally advance the
+graph.
+
+## Checkout tools — drive the purchase
+
+### `start_session`
+
+```
+mcp__lane-mcp__start_session({ intent_id })
+```
+
+Boots the autonomous checkout for an approved intent. Returns immediately with
+`outcome: "running"` and drives login → find items → checkout → payment for every
+mandate. Called **once** per intent — a second call for an in-flight intent
+attaches to the existing run rather than racing a second browser.
+
+### `get_session_status`
+
+```
+mcp__lane-mcp__get_session_status({ intent_id, wait_seconds })
+```
+
+Long-polls the checkout. With `wait_seconds`, the call holds open server-side
+until the outcome changes or the timeout elapses. Surfaces `needs_human`
+suspends and the terminal `ok` / `failed` outcome.
+
+### `resume_session`
+
+```
+mcp__lane-mcp__resume_session({ session_id, ask_id, intent_id, wait_seconds })
+```
+
+On a `needs_human` suspend (sign-in, one-time code, shipping, passkey step-up),
+the agent surfaces the request and long-polls this until you answer in the
+wallet, then returns to status polling.
+
+### `find_products` (optional)
+
+```
+mcp__lane-mcp__find_products({ mandate_id })
+```
+
+A browser-free pre-resolution step that resolves each item's product URL from the
+merchant's own catalog and persists it onto the mandate, so the later
+`start_session` navigates straight to it. Useful when items were described
+loosely — it surfaces unresolved items so they can be clarified before checkout.
+
+<Note>
+  The agent polls cleanly with `wait_seconds` (the spinner is the wait) and
+  speaks only on a transition — never pacing with `sleep`. Checkout runs against
+  the real merchant in every environment; prompts and codes are real.
+</Note>

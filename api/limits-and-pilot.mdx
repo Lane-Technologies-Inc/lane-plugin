@@ -1,0 +1,39 @@
+---
+title: Limits & pilot terms
+description: "Rate limits, connection model, and pilot pricing."
+---
+
+## Limits
+
+- **No persistent connection required.** Fire the create call from a triggered
+  worker and respond to the webhook from another. Both can be short-lived.
+- **Volume during the pilot** (single digits per day, ramping after the August
+  launch) is well within limits. We will size rate limits with you as you scale.
+- **Rate limiting** returns [`429`](/api/errors) with a `Retry-After` header.
+
+## Pilot pricing
+
+First month free, then a flat monthly fee up to a transaction threshold, with
+volume pricing beyond that, per your agreement with Lane.
+
+## Pilot checklist
+
+<Steps>
+  <Step title="Receive your credentials">
+    API key, webhook secret, and the one-time [setup](/api/setup) link from Lane.
+  </Step>
+  <Step title="Complete setup">
+    Add the payment method and set your spending authorization.
+  </Step>
+  <Step title="Stand up the webhook receiver">
+    And [verify signatures](/api/webhooks#verifying-signatures).
+  </Step>
+  <Step title="Place a live test order">
+    To a real address, from a container or test agent.
+  </Step>
+  <Step title="Working session">
+    Run real purchases together with the Lane team.
+  </Step>
+</Steps>
+
+Questions during integration go straight to the Lane team.

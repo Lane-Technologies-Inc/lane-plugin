@@ -1,0 +1,27 @@
+---
+title: Order lifecycle
+description: "The states an order moves through, from queued to a terminal completed, failed, or canceled."
+---
+
+```
+queued ──▶ running ──▶ completed
+                 \──▶ needs_input ──▶ running ...
+                 \──▶ failed
+                 \──▶ canceled
+```
+
+| Status        | Meaning                                                                                                  |
+| ------------- | -------------------------------------------------------------------------------------------------------- |
+| `queued`      | Accepted, waiting for a worker.                                                                          |
+| `running`     | Lane is actively driving the checkout.                                                                  |
+| `needs_input` | Lane hit something it can't decide on its own. The order is **paused, not failed**. See [needs_input](/api/needs-input). |
+| `completed`   | Order placed, payment captured, confirmation details attached.                                          |
+| `failed`      | Lane could not complete the order (for example, item unavailable or price above `max_price`). No charge was made. |
+| `canceled`    | You canceled the order before it completed.                                                             |
+
+`completed`, `failed`, and `canceled` are **terminal**.
+
+<Note>
+  Because checkout takes minutes, [webhooks](/api/webhooks) are the recommended
+  way to learn of each transition. [Polling](/api/polling) is the fallback.
+</Note>

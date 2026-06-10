@@ -1,0 +1,70 @@
+---
+title: Quickstart
+description: "Make your first purchase: say what you want to buy, approve it with a passkey, and let Lane check out for you."
+---
+
+Once you have a passkey-enabled card ([setup](/plugin/setup)), buying is a
+sentence.
+
+<Steps>
+  <Step title="Say what you want">
+    Tell Claude what to buy, where, and a budget:
+
+    > *"Buy a 6-person tent from REI under $250."*
+
+    There's no menu and no "demo or production?" question — your request is the
+    trigger. The agent confirms you're set up, then drafts the purchase.
+  </Step>
+  <Step title="Review the plan">
+    The agent summarizes what it's about to buy in plain English — items,
+    merchant, and a total spending ceiling. If anything's off, just say so and it
+    re-drafts.
+  </Step>
+  <Step title="Approve with a passkey">
+    The approval appears in your open Lane wallet. Tap your passkey once to
+    authorize up to the ceiling. This single tap authorizes the whole errand —
+    even if it spans multiple merchants.
+  </Step>
+  <Step title="Lane checks out">
+    Lane drives the real merchant checkout — finds the item, signs in if needed,
+    pays, and confirms — across every merchant in the purchase. The agent shows
+    a live status line and tells you the moment it needs something from you (a
+    sign-in, a one-time code, a shipping choice).
+  </Step>
+  <Step title="Done">
+    When it finishes, the agent tells you what was bought and the total. You
+    never fetched or pasted a card.
+  </Step>
+</Steps>
+
+## A multi-merchant errand
+
+A single request can span merchants — it stays **one** approval:
+
+> *"Get me camping gear under $100 — a tent and backpack from REI, and some KIND
+> bars from Amazon."*
+
+That's one intent with two mandates (REI, Amazon). You tap once; Lane checks out
+at both. See [the model](/concepts/model) for why one errand is one intent.
+
+## When Lane needs you mid-checkout
+
+Some merchants require a sign-in, a one-time code, or a shipping selection. When
+that happens, the agent posts a clear message about **what** it needs and
+**where** to do it (your open Lane wallet), then waits. You complete it in the
+wallet — using your *real* merchant credentials or the *real* code the merchant
+sends you — and Lane resumes automatically.
+
+<Warning>
+  Lane checks out at the **real merchant in every environment** — there is no
+  sandbox or test merchant, and no fake "code that works." If you're asked for a
+  one-time code, it's a real one the merchant sent to you.
+</Warning>
+
+## Resuming an interrupted purchase
+
+If a purchase got interrupted, you don't start over — just say so. The agent
+checks your active intents (`lane-cli intents`) and resumes checkout against the
+matching one rather than re-drafting. Intents are kept for up to 3 hours.
+
+Next: [how the flow works under the hood](/plugin/purchase-flow).

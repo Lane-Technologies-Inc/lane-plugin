@@ -1,0 +1,22 @@
+---
+title: Authentication
+description: "Send your API key as a bearer token on every request."
+---
+
+Send your key as a bearer token on every request:
+
+```http
+Authorization: Bearer lane_...
+```
+
+| Status | Meaning                                                                 |
+| ------ | ----------------------------------------------------------------------- |
+| `401`  | Missing or invalid key.                                                 |
+| `403`  | Key disabled, or the request would exceed your spending authorization.  |
+
+<Warning>
+  Your API key spends from the one wallet you enrolled during
+  [setup](/api/setup). Anyone holding it can place orders against your
+  authorization — store it as a secret (environment variable or secrets manager),
+  never in client-side code or version control.
+</Warning>

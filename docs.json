@@ -1,0 +1,111 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "theme": "mint",
+  "name": "Lane",
+  "description": "Agent-native payments: draft a purchase, approve it, and let Lane complete the merchant checkout — in Claude Code or over a headless API.",
+  "colors": {
+    "primary": "#0B5FFF",
+    "light": "#4D8BFF",
+    "dark": "#0B5FFF"
+  },
+  "favicon": "/favicon.svg",
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Get started",
+            "pages": [
+              "index",
+              "concepts/model"
+            ]
+          },
+          {
+            "group": "Security",
+            "pages": [
+              "security/overview",
+              "security/reporting"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Claude Code Plugin",
+        "groups": [
+          {
+            "group": "Plugin",
+            "pages": [
+              "plugin/installation",
+              "plugin/setup",
+              "plugin/quickstart",
+              "plugin/purchase-flow",
+              "plugin/architecture",
+              "plugin/troubleshooting"
+            ]
+          },
+          {
+            "group": "Reference",
+            "pages": [
+              "plugin/reference/skills",
+              "plugin/reference/cli",
+              "plugin/reference/mcp-tools",
+              "plugin/reference/configuration"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Managed Checkout API",
+        "groups": [
+          {
+            "group": "Guides",
+            "pages": [
+              "api/overview",
+              "api/setup",
+              "api/authentication",
+              "api/quickstart"
+            ]
+          },
+          {
+            "group": "Working with orders",
+            "pages": [
+              "api/create-order",
+              "api/order-lifecycle",
+              "api/webhooks",
+              "api/polling",
+              "api/needs-input"
+            ]
+          },
+          {
+            "group": "Reference",
+            "pages": [
+              "api/idempotency",
+              "api/errors",
+              "api/limits-and-pilot"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "navbar": {
+    "links": [
+      {
+        "label": "GitHub",
+        "href": "https://github.com/Lane-Technologies-Inc/lane-plugin"
+      }
+    ],
+    "primary": {
+      "type": "button",
+      "label": "getonlane.com",
+      "href": "https://getonlane.com"
+    }
+  },
+  "footer": {
+    "socials": {
+      "website": "https://getonlane.com",
+      "github": "https://github.com/Lane-Technologies-Inc"
+    }
+  }
+}

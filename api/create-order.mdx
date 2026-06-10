@@ -1,0 +1,146 @@
+---
+title: Create an order
+description: "POST /agent/v1/orders — send a plain-language instruction plus a ship-to address, and Lane queues the checkout."
+---
+
+```http
+POST /agent/v1/orders
+```
+
+<RequestExample>
+```http Request
+POST /agent/v1/orders HTTP/1.1
+Host: api.getonlane.com
+Authorization: Bearer lane_...
+Content-Type: application/json
+Idempotency-Key: maive-approval-9c1f2a
+
+{
+  "instruction": "Buy a Yeti Tundra 45 hard cooler in tan at Amazon",
+  "max_price": "350.00",
+  "currency": "USD",
+  "ship_to": {
+    "name": "Jane Homeowner",
+    "line1": "123 Oak Street",
+    "line2": "Apt 4",
+    "city": "Austin",
+    "state": "TX",
+    "postal_code": "78701",
+    "country": "US",
+    "phone": "+15125550123"
+  },
+  "gift": {
+    "is_gift": true,
+    "note": "Thank you for trusting us with your roof. - The Maive Team"
+  },
+  "metadata": {
+    "maive_order_id": "M-44821",
+    "roofer": "Dallas North crew"
+  },
+  "callback_url": "https://hooks.maive.com/lane"
+}
+```
+</RequestExample>
+
+<ResponseExample>
+```http Response
+HTTP/1.1 202 Accepted
+Content-Type: application/json
+
+{
+  "order_id": "ord_8sd2k1n4",
+  "status": "queued",
+  "created_at": "2026-06-10T17:04:22Z"
+}
+```
+</ResponseExample>
+
+## Request fields
+
+<ParamField body="instruction" type="string" required>
+  Plain-language description of what to buy. Name the product and, if you have a
+  preference, the merchant. Lane resolves the exact product page.
+</ParamField>
+
+<ParamField body="max_price" type="string" required>
+  Maximum total Lane may spend, as a decimal string (item plus tax plus
+  shipping). Lane will not complete an order above this, and will not exceed your
+  account spending authorization.
+</ParamField>
+
+<ParamField body="currency" type="string" default="USD">
+  ISO 4217 code.
+</ParamField>
+
+<ParamField body="ship_to" type="object" required>
+  Where the order ships. This is the recipient, which is usually not you. See
+  fields below.
+</ParamField>
+
+<ParamField body="gift" type="object">
+  `is_gift` selects gift checkout when the merchant offers it. `note` is included
+  as a gift message where supported, and as a packing-slip note otherwise.
+</ParamField>
+
+<ParamField body="metadata" type="object">
+  Up to 20 key-value string pairs echoed back on every webhook and status
+  response. Use it to carry your own IDs.
+</ParamField>
+
+<ParamField body="callback_url" type="string">
+  Overrides your account default webhook URL for this order only.
+</ParamField>
+
+### `ship_to` fields
+
+<ParamField body="name" type="string" required>
+  Recipient full name.
+</ParamField>
+
+<ParamField body="line1" type="string" required>
+  Street address.
+</ParamField>
+
+<ParamField body="line2" type="string">
+  Unit, apartment, suite.
+</ParamField>
+
+<ParamField body="city" type="string" required />
+
+<ParamField body="state" type="string" required>
+  State or region.
+</ParamField>
+
+<ParamField body="postal_code" type="string" required />
+
+<ParamField body="country" type="string" required>
+  ISO 3166-1 alpha-2 (`US`).
+</ParamField>
+
+<ParamField body="phone" type="string">
+  Used only if the merchant requires a delivery phone number.
+</ParamField>
+
+## Response
+
+A `202` means the order is accepted and queued, **not** that it is complete.
+
+<ResponseField name="order_id" type="string">
+  The order's unique id. Store it and match it on the webhook or status poll.
+</ResponseField>
+
+<ResponseField name="status" type="string">
+  `queued` on creation. See the [order lifecycle](/api/order-lifecycle).
+</ResponseField>
+
+<ResponseField name="created_at" type="string">
+  ISO 8601 timestamp.
+</ResponseField>
+
+Watch the [webhook](/api/webhooks) or [poll the status
+endpoint](/api/polling) for the outcome.
+
+<Note>
+  Send an [`Idempotency-Key`](/api/idempotency) header on every create so a retry
+  never places a duplicate order.
+</Note>

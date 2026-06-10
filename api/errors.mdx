@@ -1,0 +1,21 @@
+---
+title: Errors
+description: "Standard HTTP status codes with a JSON error body."
+---
+
+Errors use standard HTTP status codes with a JSON body:
+
+```json
+{ "error": { "code": "invalid_address", "message": "ship_to.postal_code is required." } }
+```
+
+| Status | Meaning                                                                                       |
+| ------ | --------------------------------------------------------------------------------------------- |
+| `400`  | Malformed request or missing required field.                                                  |
+| `401`  | Missing or invalid API key.                                                                   |
+| `403`  | Key disabled, or order would exceed your spending authorization.                              |
+| `404`  | Unknown `order_id`.                                                                           |
+| `409`  | [Idempotency key](/api/idempotency) reused with a different request body.                     |
+| `422`  | Request understood but not actionable (for example, `max_price` below a plausible price for the item). |
+| `429`  | Rate limited. Retry after the `Retry-After` header.                                           |
+| `5xx`  | Lane-side error. Safe to retry with the same [idempotency key](/api/idempotency).             |

@@ -1,0 +1,48 @@
+---
+title: Configuration
+description: "The plugin's one setting, the environment override, and the lane-mcp endpoint."
+---
+
+## User config
+
+The plugin declares a single setting in its manifest.
+
+| Setting        | Type   | Required | Notes                                                                       |
+| -------------- | ------ | -------- | --------------------------------------------------------------------------- |
+| `lane_api_key` | string | No       | Authenticates to `lane-mcp`. **Leave blank at install** — the setup flow fills it in automatically after `lane-cli init`. |
+
+The key authenticates both the CLI (`~/.lane/config.json`) and the MCP server
+(plugin config). It is **not** card data — it scopes access to your own Lane
+account's wallet operations.
+
+### Keeping the plugin and CLI on the same account
+
+`lane-cli init` writes the key to `~/.lane/config.json`. The
+`scripts/sync-api-key.mjs` script copies it into your plugin config so
+`lane-mcp` authenticates to the **same** account as the CLI. Run it after every
+`lane-cli init` or account switch, then `/reload-plugins`. Set the key by hand
+(via `/plugin` → configure → `lane`) only to point the plugin at a *different*
+account than your CLI login.
+
+<Note>
+  MCP servers read their auth header only when they connect. A new key takes
+  effect on the next `/reload-plugins` or restart — not mid-connection.
+</Note>
+
+## Endpoint
+
+The `lane-mcp` URL is baked into the plugin manifest and points at Lane
+production by default:
+
+| Server     | Default URL                       | Override            |
+| ---------- | --------------------------------- | ------------------- |
+| `lane-mcp` | `https://mcp.getonlane.com/mcp`   | `LANE_MCP_HOST` env |
+
+Set `LANE_MCP_HOST` to point the server elsewhere; the `/mcp` path is appended
+automatically. There is nothing else to configure at install.
+
+<Note>
+  The Managed Checkout API is a separate surface on a different host
+  (`https://api.getonlane.com/agent/v1`) — see the [API
+  reference](/api/overview). The two don't share configuration.
+</Note>

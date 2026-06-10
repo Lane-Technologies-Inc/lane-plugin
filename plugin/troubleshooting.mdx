@@ -1,0 +1,89 @@
+---
+title: Troubleshooting
+description: "Fixes for setup snags, key-sync mismatches, and the error codes that can surface during checkout."
+---
+
+## Setup
+
+| Symptom                                   | Fix                                                                                         |
+| ----------------------------------------- | ------------------------------------------------------------------------------------------- |
+| Browser doesn't open on `init` / `wallet add` | The CLI prints a URL — open it manually.                                                |
+| `init` spinner hangs forever              | The browser was closed early. Re-run `lane-cli init --intent login`.                        |
+| "Already authenticated"                   | The account already exists locally. Continue to adding a card.                              |
+| `enable-agentic` says "Already enabled"   | The card is already passkey-enabled — you're ready to buy.                                  |
+| Multiple cards, no default                | Run `lane-cli wallet default <last4>`.                                                       |
+| Payment fails with "card not found"       | The passkey ceremony was skipped. Run `lane-cli wallet enable-agentic <last4>`.             |
+
+## The MCP server uses the wrong account
+
+If approvals don't show the card you enrolled, the plugin and CLI are on
+different Lane accounts. Re-sync and reconnect:
+
+```bash
+node "<plugin>/scripts/sync-api-key.mjs"
+```
+
+```text
+/reload-plugins
+```
+
+The key takes effect on reconnect, not mid-session. See
+[configuration](/plugin/reference/configuration).
+
+## Checkout error codes
+
+When a purchase fails, the agent surfaces an `error_code` and the right next
+step. Each code has a single correct action — the agent never silently retries.
+
+<AccordionGroup>
+  <Accordion title="PREFLIGHT_TOKEN_REVOKED">
+    The card's agentic token isn't active. Re-run `lane-cli wallet enable-agentic
+    <last4>`, then re-approve the purchase.
+  </Accordion>
+  <Accordion title="PREFLIGHT_DEVICE_NOT_BOUND">
+    The passkey ceremony never completed for this card. Run `lane-cli wallet
+    enable-agentic <last4>` and wait for it to land, then re-approve.
+  </Accordion>
+  <Accordion title="PREFLIGHT_VELOCITY">
+    Too many recent attempts on this card. Wait the cooldown printed in the
+    error, then retry once. Don't loop.
+  </Accordion>
+  <Accordion title="MERCHANT_DECLINE_ISSUER">
+    The merchant relayed an issuer decline (insufficient funds, fraud hold).
+    Re-approve the purchase with a different card.
+  </Accordion>
+  <Accordion title="MERCHANT_DECLINE_FRAUD_HOLD">
+    An issuer fraud rule fired. Contact your bank — Lane can't clear this.
+  </Accordion>
+  <Accordion title="CRYPTOGRAM_EXPIRED / CRYPTOGRAM_REPLAY">
+    The single-use credential expired or was already spent. Re-approve to get a
+    fresh one — credentials are never reused.
+  </Accordion>
+  <Accordion title="INTENT_EXPIRED">
+    The intent is past its window and can't be revived. Re-draft the purchase.
+  </Accordion>
+  <Accordion title="MANDATE_ALREADY_USED">
+    That merchant's checkout already completed. Run `lane-cli intent status
+    <lint_*>` to find the next pending mandate; don't retry the used one.
+  </Accordion>
+  <Accordion title="MCC_BLOCKED">
+    The merchant's category is on Lane's high-risk blocklist. The purchase stops
+    here — Lane won't switch merchants to work around it.
+  </Accordion>
+</AccordionGroup>
+
+## The store blocked the automated checkout
+
+If a run fails at sign-in with repeated errors, a CAPTCHA, or a dead-end page,
+the merchant's bot-detection refused the automated session. This is **not** your
+password and **not** a Lane error. Re-running against the same store keeps
+failing — try a different store. Merchants with a normal online storefront
+complete reliably; a few large retailers wall agent checkout aggressively.
+
+## Inspecting state
+
+```bash
+lane-cli intents                  # active purchase intents, newest first
+lane-cli intent status <lint_*>   # mandates under an intent + their state
+lane-cli wallet ls                # cards and which are passkey-enabled
+```

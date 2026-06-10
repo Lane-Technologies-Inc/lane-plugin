@@ -1,0 +1,65 @@
+---
+title: Security & data handling
+description: "How Lane is designed so raw card data never touches Lane's servers — across both the plugin and the Managed Checkout API."
+---
+
+Lane lets an agent authorize and execute payments on a card — the buyer's own —
+through [Lane](https://getonlane.com). It is designed so that raw card data never
+touches Lane's servers, on both surfaces.
+
+## Card data
+
+<CardGroup cols={1}>
+  <Card title="Raw card numbers never reach Lane servers" icon="vault">
+    Cards are entered into a hosted [VGS](https://www.verygoodsecurity.com/) field
+    and tokenized; Lane only ever handles aliases (`tok_*`), never the PAN. VGS is
+    the token requestor, so the cardholder data environment stays outside Lane's
+    PCI scope.
+  </Card>
+  <Card title="Payment credentials are single-use" icon="key">
+    The network token / cryptogram minted for a purchase is scoped to one approved
+    purchase and is not reusable. Treat it as a one-time secret; do not echo it
+    into long-lived chat history.
+  </Card>
+  <Card title="Spend is always bounded" icon="shield-check">
+    Every purchase is bounded by an authorization the buyer sets — a per-purchase
+    ceiling in the plugin (gated by a passkey), or a per-order cap plus an optional
+    monthly ceiling in the [Managed Checkout API](/api/setup).
+  </Card>
+</CardGroup>
+
+## How the two surfaces gate spend
+
+| Surface                                       | Approval gate                                                                  |
+| --------------------------------------------- | ------------------------------------------------------------------------------ |
+| [Claude Code Plugin](/plugin/purchase-flow)   | A FIDO passkey / biometric ceremony in the browser on **every** purchase. The agent cannot mint a credential without that human approval. |
+| [Managed Checkout API](/api/setup)            | A one-time payment method + spending authorization. No per-order tap; orders that would exceed the authorization are paused, not charged. |
+
+## What the plugin executes on your machine
+
+- **A SessionStart hook** (`plugins/lane/hooks/install-check.mjs`) that installs
+  the `@getonlane/lane-cli` binary from npm if it isn't already on your PATH. It
+  installs nothing else and runs no other code at startup.
+- **One hosted MCP server** (`lane-mcp`) reached over HTTPS and authenticated with
+  your Lane API key (`Authorization: Bearer`). It is not a local process — it runs
+  on Lane's infrastructure. Its URL is declared in plain sight in
+  `plugins/lane/.claude-plugin/plugin.json`.
+
+## Authentication & secrets
+
+- Your Lane API key authenticates both the CLI (`~/.lane/config.json`) and the
+  hosted servers. It is **not** card data; it scopes access to your own Lane
+  account's wallet operations. API keys are allowlisted per account.
+- Lane does not log card numbers, cryptograms, or passkey material.
+- High-risk merchant categories (adult content, gambling, crypto-funding,
+  prescription drugs, and similar) are refused at credential-mint time.
+
+## Environment
+
+<Warning>
+  This is pre-launch software. The bundled MCP endpoints currently point at Lane
+  **staging** (`mcp-staging.aws.getonlane.com`), and account access is gated. Do
+  not treat it as a generally-available production service yet.
+</Warning>
+
+Found a vulnerability? See [reporting](/security/reporting).

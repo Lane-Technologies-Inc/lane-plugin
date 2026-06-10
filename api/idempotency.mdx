@@ -1,0 +1,20 @@
+---
+title: Idempotency
+description: "Send an Idempotency-Key on every create so a retry never places a duplicate order."
+---
+
+Send an `Idempotency-Key` header on every create. Use a stable ID from your side
+(your approval ID is ideal):
+
+```http
+Idempotency-Key: maive-approval-9c1f2a
+```
+
+If a request is retried with the same key within 24 hours, Lane returns the
+original order instead of placing a duplicate. This makes it safe to retry on a
+timeout or a Lambda re-invocation.
+
+<Warning>
+  Reusing an idempotency key with a *different* request body returns
+  [`409`](/api/errors). Use a fresh key for a genuinely different order.
+</Warning>

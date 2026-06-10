@@ -1,0 +1,41 @@
+---
+title: Skills
+description: "The three skills the plugin ships — the lane router and its two setup sub-skills."
+---
+
+The plugin bundles one router skill and two setup sub-skills. The agent invokes
+them automatically; you don't call them by name.
+
+## `lane` — the router
+
+The main skill. The moment you express a purchase ("buy…", "get me…", "pay…"),
+it runs the [deterministic purchase flow](/plugin/purchase-flow) end-to-end —
+confirming you're set up, drafting and approving the intent, and driving the
+checkout. It drops into a setup sub-skill only when a prerequisite is missing.
+
+**Triggers include:** `buy`, `purchase`, `pay`, `checkout`, `get me`, `I need`,
+`intent`, `mandate`, `wallet`, `card`, `agentic commerce`, `lane`, `lane-cli`.
+
+It never shows a welcome menu or asks "demo or production?" — your request is the
+trigger.
+
+## `account-setup` — sign in
+
+Runs `lane-cli init`, guides you through the browser sign-up or log-in, then
+syncs the resulting API key into the plugin so `lane-mcp` uses the same account.
+Invoked when `lane-cli wallet ls` reports *"Lane isn't set up on this machine
+yet."* See [setup, step 1 & 4](/plugin/setup).
+
+## `wallet-setup` — add and enable a card
+
+Runs `lane-cli wallet add` and `lane-cli wallet enable-agentic`, guiding you
+through the card-entry form and the passkey ceremony in the browser. Invoked when
+you're logged in but have no card, or a card that isn't passkey-enabled. See
+[setup, steps 2 & 3](/plugin/setup).
+
+<Note>
+  The setup sub-skills are procedural (`disable-model-invocation: true`) — they
+  run as fixed steps rather than being reasoned about. The agent can only run the
+  CLI and narrate what to do in the browser; it can't script the browser
+  interaction itself.
+</Note>

@@ -1,0 +1,78 @@
+---
+title: Webhooks
+description: "The recommended way to learn an order's outcome — Lane POSTs a signed JSON event to your callback_url on every status transition."
+---
+
+Because checkout takes minutes and your workers are short-lived, webhooks are the
+recommended way to learn the outcome. Lane `POST`s a JSON event to your
+`callback_url` on every status transition.
+
+## Events
+
+| Event                    | When                                          |
+| ------------------------ | --------------------------------------------- |
+| `order.running`          | Lane started working the order.               |
+| `order.needs_input`      | Order paused, action may be required.         |
+| `order.completed`        | Order placed successfully.                    |
+| `order.failed`           | Order could not be completed.                 |
+| `order.tracking_updated` | A tracking number became available after completion. |
+
+## Example: `order.completed`
+
+```json
+{
+  "id": "evt_3kd9...",
+  "type": "order.completed",
+  "created_at": "2026-06-10T17:11:48Z",
+  "data": {
+    "order_id": "ord_8sd2k1n4",
+    "status": "completed",
+    "merchant": "amazon.com",
+    "order_number": "112-7755318-9921841",
+    "line_items": [
+      { "name": "Yeti Tundra 45 Hard Cooler, Tan", "quantity": 1, "price": "299.99" }
+    ],
+    "amount_charged": "324.61",
+    "currency": "USD",
+    "receipt_url": "https://app.getonlane.com/receipts/ord_8sd2k1n4",
+    "tracking": null,
+    "metadata": { "maive_order_id": "M-44821", "roofer": "Dallas North crew" }
+  }
+}
+```
+
+<Note>
+  `tracking` is best-effort. Many merchants do not show a tracking number at
+  checkout time. When one becomes available, Lane sends a separate
+  `order.tracking_updated` event with the same `order_id`.
+</Note>
+
+## Verifying signatures
+
+Every webhook carries an `X-Lane-Signature` header:
+
+```
+X-Lane-Signature: t=1749575508,v1=4f1e9c0a2b...<hex>
+```
+
+Compute HMAC-SHA256 over `"{t}.{raw_request_body}"` using your webhook secret and
+compare it to `v1` in constant time. Reject if the timestamp is more than five
+minutes old.
+
+```python
+import hashlib, hmac, time
+
+def verify_lane_webhook(secret: str, header: str, raw_body: bytes) -> bool:
+    parts = dict(p.split("=", 1) for p in header.split(","))
+    timestamp, sig = parts["t"], parts["v1"]
+    if abs(time.time() - int(timestamp)) > 300:
+        return False
+    signed = f"{timestamp}.".encode() + raw_body
+    expected = hmac.new(secret.encode(), signed, hashlib.sha256).hexdigest()
+    return hmac.compare_digest(expected, sig)
+```
+
+<Warning>
+  Respond `2xx` within 10 seconds. Lane retries failed deliveries with
+  exponential backoff for up to 24 hours.
+</Warning>

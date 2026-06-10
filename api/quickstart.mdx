@@ -1,0 +1,70 @@
+---
+title: Python quickstart
+description: "A complete handler for a triggered worker — create the order on approval, then let the webhook close the loop."
+---
+
+A complete handler for a triggered AWS worker. Create the order on approval, then
+let the [webhook](/api/webhooks) close the loop.
+
+## Create an order
+
+```python
+import os
+import json
+import urllib.request
+
+LANE_API = "https://api.getonlane.com/agent/v1"
+LANE_KEY = os.environ["LANE_API_KEY"]
+
+
+def place_gift_order(approval_id: str, instruction: str, max_price: str,
+                     recipient: dict, gift_note: str) -> str:
+    body = json.dumps({
+        "instruction": instruction,
+        "max_price": max_price,
+        "ship_to": recipient,
+        "gift": {"is_gift": True, "note": gift_note},
+        "metadata": {"maive_order_id": approval_id},
+    }).encode()
+    req = urllib.request.Request(
+        f"{LANE_API}/orders",
+        data=body,
+        method="POST",
+        headers={
+            "Authorization": f"Bearer {LANE_KEY}",
+            "Content-Type": "application/json",
+            "Idempotency-Key": approval_id,
+        },
+    )
+    with urllib.request.urlopen(req) as resp:
+        return json.load(resp)["order_id"]   # store this, match it on the webhook
+```
+
+## Receive the webhook
+
+```python
+# Webhook receiver (API Gateway -> Lambda)
+def handle_lane_webhook(event):
+    raw = event["body"].encode()
+    if not verify_lane_webhook(WEBHOOK_SECRET, event["headers"]["x-lane-signature"], raw):
+        return {"statusCode": 400}
+
+    e = json.loads(raw)
+    if e["type"] == "order.completed":
+        d = e["data"]
+        mark_gift_sent(d["metadata"]["maive_order_id"], d["order_number"], d["amount_charged"])
+    elif e["type"] == "order.failed":
+        notify_slack(f"Lane could not place order {e['data']['order_id']}")
+    elif e["type"] == "order.needs_input":
+        notify_slack(f"Lane needs input: {e['data']['resolution_url']}")
+
+    return {"statusCode": 200}
+```
+
+The `verify_lane_webhook` helper is on the [webhooks
+page](/api/webhooks#verifying-signatures).
+
+<Note>
+  No persistent connection is required. Fire the create call from a triggered
+  worker and respond to the webhook from another — both can be short-lived.
+</Note>

@@ -1,0 +1,88 @@
+---
+title: The purchase flow
+description: "How the plugin turns a request into a completed purchase: draft an intent, approve it with a passkey, and let Lane drive the merchant checkout."
+---
+
+The plugin runs a deterministic flow on top of the [intent / mandate
+model](/concepts/model). It has two halves, both served by the single
+**`lane-mcp`** server.
+
+```
+say what to buy ──▶ draft intent ──▶ passkey approval ──▶ Lane drives checkout ──▶ done
+                    (intent tools)    (one tap, browser)   (checkout tools)
+```
+
+## Step 1 — Confirm you're set up
+
+The agent runs `lane-cli wallet ls` to confirm a passkey-enabled card exists —
+every time, because wallet state can change (a card revoked, a passkey expired)
+outside the agent's view. If a prerequisite is missing, it drops into
+[setup](/plugin/setup) and returns.
+
+## Step 2 — Draft and approve the intent
+
+The agent calls `intent_submit` with your request in plain language and tracks
+the returned `session_id`. The server responds with one of:
+
+<AccordionGroup>
+  <Accordion title="needs_info — a clarification is needed">
+    The drafter needs a detail (a budget, a size). The agent asks you naturally,
+    then re-submits with your answer. Treat each round as a real question.
+  </Accordion>
+  <Accordion title="draft_ready — review and approve">
+    A structured plan with the items, merchants, and total ceiling, plus an
+    approval link. The agent summarizes it in plain English and surfaces it for
+    approval — which pops up in your already-open Lane wallet. You tap your
+    passkey **once**. The agent polls for completion; it never asks you to "let
+    it know when you're done."
+  </Accordion>
+  <Accordion title="complete — approved">
+    The intent is authorized (a `lint_*` id). The agent goes straight to Step 3.
+  </Accordion>
+</AccordionGroup>
+
+The single passkey tap both authorizes the intent and creates the underlying
+agentic authorization server-side. The browser tab is just a viewport — the
+authorization is recorded on Lane's side, so closing the tab loses nothing.
+
+## Step 3 — Lane drives the checkout
+
+Once approved, the agent hands the intent to the checkout engine with
+`start_session`. The engine resolves each mandate's merchant and drives the full
+purchase in a real browser — login, find items, checkout, submit payment —
+looping through every mandate itself.
+
+- The agent **polls** `get_session_status` and speaks only when something
+  changes — a new phase, a request for you, or a final result.
+- On a **`needs_human`** suspend (sign-in, one-time code, shipping, a passkey
+  step-up), the agent tells you what's needed and where, relays the merchant's
+  prompt verbatim, and resumes once you've answered in the wallet.
+- A second `start_session` for an in-flight intent attaches to the existing run
+  rather than racing a second browser.
+
+### Terminal outcomes
+
+| Outcome             | What it means                                                                 |
+| ------------------- | ----------------------------------------------------------------------------- |
+| **completed**       | The purchase went through. The agent reports what was bought and the total.   |
+| **failed / error**  | The agent reports the reason and proposes the right next step — it doesn't silently retry. |
+| **merchant blocked**| The store's bot-detection refused the automated session (not your fault, not a Lane error). The agent suggests trying a different store rather than re-running the same one. |
+
+## What's pre-checked vs. what isn't
+
+Lane catches everything it *can* before you tap your passkey — token health, the
+authorization window, passkey binding, and velocity all run in preflight. What
+can't be pre-checked is the same as any online purchase: your bank balance, an
+issuer-side limit, and the merchant's category. Those only surface at the
+issuer's authorization when the merchant charges the card.
+
+<Note>
+  Lane refuses high-risk merchant categories (adult content, gambling,
+  crypto-funding, prescription drugs, and similar) at credential-mint time. If a
+  purchase is blocked for that reason, the agent stops and tells you — it won't
+  switch merchants to work around it.
+</Note>
+
+For the exact tools behind each step, see the [MCP tools
+reference](/plugin/reference/mcp-tools); for recovery from specific errors, see
+[troubleshooting](/plugin/troubleshooting).

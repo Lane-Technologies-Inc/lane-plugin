@@ -1,0 +1,81 @@
+---
+title: Managed Checkout API
+description: "Buy anything from any merchant with one API call. You send a plain-language instruction plus where to ship it; Lane runs the full checkout on our servers and reports back."
+---
+
+**Buy anything from any merchant with one API call. Lane handles the rest.**
+
+You send a plain-language instruction plus where to ship it. Lane runs the full
+checkout on our servers — find the product, add to cart, sign in if needed, pay,
+confirm — and reports back when the order is placed. No browser automation, no
+merchant integrations, and no payment handling on your side.
+
+<CardGroup cols={3}>
+  <Card title="Base URL" icon="link">
+    `https://api.getonlane.com/agent/v1`
+  </Card>
+  <Card title="Auth" icon="key">
+    `Authorization: Bearer <your-api-key>`
+  </Card>
+  <Card title="Style" icon="clock">
+    Asynchronous — you create an order, Lane works it in the background, and we
+    notify you by webhook (with polling as a fallback).
+  </Card>
+</CardGroup>
+
+## The integration in one picture
+
+```
+Your app                         Lane                         Merchant
+--------                         ----                         --------
+manager approves gift        |                            |
+  POST /agent/v1/orders        |                            |
+  { instruction, ship_to, ... }                            |
+  +----------------------------->                          |
+        202 { order_id }       |                            |
+  <-----------------------------+                          |
+        |                        |   finds product, adds to cart,
+        |                        |   signs in, pays, confirms
+        |                        +--------------------------->
+        |                        |<--------------------------+
+        |   webhook: order.completed                          |
+  <-----------------------------+                            |
+        |   { order_number, amount_charged, tracking }       |
+  v  mark gift as sent          |                            |
+```
+
+Everything between the `202` and the `order.completed` webhook happens on Lane's
+servers. A typical order takes a few minutes. Batching versus one-at-a-time makes
+no difference on our side, and there is no cold-start penalty.
+
+## How it relates to the plugin
+
+This API is the **headless** way to use Lane. Where the [Claude Code
+plugin](/plugin/installation) puts a person in the loop with a passkey on every
+purchase, the API is pre-authorized: you set a payment method and a spending
+authorization once, and every order after that is a single server-to-server call
+with no per-order approval.
+
+<Note>
+  Under the hood, an order is one merchant checkout — a *mandate* — and your
+  account's spending authorization is the *intent*-level budget. You don't need
+  that vocabulary to use the API, but if you're also using the plugin, the
+  [shared model](/concepts/model) explains how the two line up.
+</Note>
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="One-time setup" icon="gear" href="/api/setup">
+    Add a payment method, set a spending authorization, get your keys.
+  </Card>
+  <Card title="Quickstart" icon="bolt" href="/api/quickstart">
+    Place your first order from a backend worker.
+  </Card>
+  <Card title="Create an order" icon="cart-plus" href="/api/create-order">
+    The full request and response shape.
+  </Card>
+  <Card title="Webhooks" icon="bell" href="/api/webhooks">
+    Learn the outcome as it happens, and verify signatures.
+  </Card>
+</CardGroup>

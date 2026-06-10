@@ -1,0 +1,39 @@
+---
+title: Handling needs_input
+description: "What happens when Lane can't proceed on its own — and why you don't need to build anything for it in the pilot."
+---
+
+Lane resolves most obstacles on its own — bot checks, variant pickers, sign-in on
+sites where you have stored credentials. When it genuinely cannot proceed, the
+order moves to `needs_input` and the webhook includes a reason and, where a person
+can resolve it, a hosted link.
+
+```json
+{
+  "type": "order.needs_input",
+  "data": {
+    "order_id": "ord_8sd2k1n4",
+    "reason": "price_exceeds_max",
+    "detail": "Lowest available total is 372.40, above max_price 350.00.",
+    "resolution_url": "https://app.getonlane.com/resolve/ord_8sd2k1n4"
+  }
+}
+```
+
+Common reasons: `price_exceeds_max`, `item_unavailable`, `address_rejected`,
+`login_challenge`.
+
+<Note>
+  **For the pilot you do not need to build anything here.** Treating `needs_input`
+  as "notify a human" — the same Slack ping you use today — is enough. The hosted
+  `resolution_url` lets a person approve a higher price, pick an alternative, or
+  clear a sign-in challenge, after which Lane resumes automatically.
+</Note>
+
+## Canceling an order
+
+To cancel a paused or running order:
+
+```http
+POST /agent/v1/orders/{order_id}/cancel
+```

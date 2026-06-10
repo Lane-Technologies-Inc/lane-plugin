@@ -1,0 +1,98 @@
+---
+title: First-time setup
+description: "Sign in to Lane, add a card and enable it for agent payments, and sync your API key — all driven by the agent through the browser."
+---
+
+Setup happens once. The agent runs every command; you only interact with the
+browser windows that open. There is nothing to type and no key to paste.
+
+<Note>
+  If you just say what you want to buy before setting up, the agent walks you
+  through these steps automatically and then continues to the purchase. You can
+  also run them up front.
+</Note>
+
+## Step 1 — Sign in
+
+The agent runs:
+
+```bash
+lane-cli init --intent login
+```
+
+Use `--intent signup` to create a new account. A browser opens automatically;
+sign in there. The CLI shows a `Waiting for sign-up…` spinner until the browser
+flow finishes.
+
+<Tip>
+  If the browser doesn't open, the CLI prints a URL — open it manually. If the
+  spinner hangs, you probably closed the browser early; the agent just re-runs
+  the command.
+</Tip>
+
+## Step 2 — Add a card
+
+```bash
+lane-cli wallet add
+```
+
+A secure card-entry form opens in the browser. Enter your card number, expiry,
+CVC, and billing address there. **Lane never sees the raw card number** — it's
+tokenized in a hosted vault.
+
+## Step 3 — Enable the card for agent payments
+
+```bash
+lane-cli wallet enable-agentic <last4>
+```
+
+A browser opens for the passkey / Touch ID ceremony. Tap your passkey to enable
+the card. **This step must complete before any agent-initiated payment will
+work.** Verify with:
+
+```bash
+lane-cli wallet ls
+```
+
+Re-running `enable-agentic` prints "Already enabled for AI-agent payments" once
+the ceremony has landed.
+
+## Step 4 — Sync your API key into the plugin
+
+`lane-cli init` writes your account API key to `~/.lane/config.json`. The
+`lane-mcp` server must use the **same** key, or it resolves to a different Lane
+account than your CLI — and the approval page won't see the card you enrolled.
+The agent runs the bundled sync script:
+
+```bash
+node "<plugin>/scripts/sync-api-key.mjs"
+```
+
+It copies the key from `~/.lane/config.json` into your plugin config
+(idempotent — it preserves all other settings). Then reconnect the servers:
+
+```text
+/reload-plugins
+```
+
+MCP servers read their auth header only when they connect, so the new key takes
+effect on the next `/reload-plugins` or restart — not mid-connection.
+
+<Note>
+  Re-run the sync step any time you re-run `lane-cli init` or switch Lane
+  accounts, so the plugin always tracks your current CLI login. To point the
+  plugin at a *different* account than your CLI, set the key by hand via
+  `/plugin` → configure → `lane`.
+</Note>
+
+## Verifying you're ready
+
+```bash
+lane-cli wallet ls
+```
+
+- **At least one passkey-enabled card** → you're ready to buy.
+- **`No cards yet`** → run Step 2, then Step 3.
+- **`Lane isn't set up on this machine yet`** → `init` didn't complete; re-run Step 1.
+
+When the wallet shows an enabled card, head to the [quickstart](/plugin/quickstart).

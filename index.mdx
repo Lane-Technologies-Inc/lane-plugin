@@ -1,0 +1,58 @@
+---
+title: Lane
+description: "Agent-native payments. Your agent drafts a purchase, you authorize it, and Lane completes the checkout at the real merchant — credentials and card data never leave the vault."
+---
+
+Lane turns an AI agent into a buyer. The agent says what to purchase, where, and
+how much; Lane runs the full checkout at the real merchant (find the product,
+add to cart, sign in if needed, pay, confirm) and reports back. Raw card numbers
+never reach Lane — cards are tokenized, payment credentials are single-use, and
+every purchase is bounded by an authorization the buyer sets.
+
+There are two ways to use Lane, built on the same payment rails.
+
+<CardGroup cols={2}>
+  <Card title="Claude Code Plugin" icon="terminal" href="/plugin/installation">
+    Interactive purchasing inside Claude Code. The agent drafts a purchase, the
+    person approves it with a **passkey tap**, and Lane drives the merchant
+    checkout autonomously. Best when a human is in the loop on each purchase.
+  </Card>
+  <Card title="Managed Checkout API" icon="code" href="/api/overview">
+    Headless, server-to-server checkout. One `POST /orders` call with a
+    plain-language instruction and a ship-to address; Lane works the order in the
+    background and notifies you by webhook. Best for autonomous, pre-authorized
+    purchasing at scale.
+  </Card>
+</CardGroup>
+
+## Which one do I want?
+
+|                         | Claude Code Plugin                          | Managed Checkout API                              |
+| ----------------------- | ------------------------------------------- | ------------------------------------------------- |
+| **Who drives it**       | A person working alongside an agent         | Your backend / an autonomous agent                |
+| **Approval per purchase** | Passkey tap in the browser, every time    | None per order — spend is pre-authorized          |
+| **Surface**             | Claude Code (CLI, desktop, IDE)             | HTTPS API + webhooks                              |
+| **Latency model**       | Conversational, live                        | Asynchronous (an order takes a few minutes)       |
+| **Best for**            | Hands-on shopping, exploration, demos       | Programmatic, high-volume, unattended purchasing  |
+
+Both surfaces share one model — purchases are organized as an **intent** (the
+authorization) and its **mandates** (each a single merchant checkout). The
+[shared concepts page](/concepts/model) explains it once; you don't need it to
+get started.
+
+## Get started
+
+<CardGroup cols={2}>
+  <Card title="Install the plugin" icon="download" href="/plugin/installation">
+    Add Lane to Claude Code and make your first purchase.
+  </Card>
+  <Card title="Call the API" icon="bolt" href="/api/quickstart">
+    Place your first order from a backend worker in a few lines of Python.
+  </Card>
+  <Card title="How Lane keeps cards safe" icon="shield" href="/security/overview">
+    Tokenization, single-use credentials, and the approval gate.
+  </Card>
+  <Card title="The intent / mandate model" icon="diagram-project" href="/concepts/model">
+    The one model both surfaces share.
+  </Card>
+</CardGroup>

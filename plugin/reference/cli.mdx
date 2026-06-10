@@ -1,0 +1,45 @@
+---
+title: lane-cli commands
+description: "The lane-cli command map — what each command does and who runs it. The agent runs every command; you never type one."
+---
+
+The agent runs every `lane-cli` command and narrates what you need to do in any
+browser that opens. You should never have to type one yourself. `lane-cli wallet
+rm` is the only command the agent confirms verbally before running.
+
+## Account
+
+| Command                              | Purpose                                                                 |
+| ------------------------------------ | ----------------------------------------------------------------------- |
+| `lane-cli init --intent login`       | Log in. Opens a browser automatically; the agent verifies with `wallet ls`. |
+| `lane-cli init --intent signup`      | Create a new account. Same browser flow.                                |
+| `lane-cli logout`                    | Clear local credentials.                                                |
+
+<Note>
+  Always pass `--intent login` or `--intent signup` — it skips the interactive
+  terminal prompt so the agent can run `init` without a TTY.
+</Note>
+
+## Wallet
+
+| Command                                    | Purpose                                                                  |
+| ------------------------------------------ | ------------------------------------------------------------------------ |
+| `lane-cli wallet ls`                       | List cards and which are passkey-enabled (read-only).                    |
+| `lane-cli wallet add`                      | Add a card via a secure browser form (Lane never sees the raw number).   |
+| `lane-cli wallet enable-agentic [last4]`   | Run the passkey ceremony so a card can be used for agent payments.       |
+| `lane-cli wallet default <last4>`          | Set the default card.                                                    |
+| `lane-cli wallet rm <last4> --yes`         | Remove a card. Destructive — the agent confirms your intent first.       |
+
+## Intents
+
+| Command                              | Purpose                                                                      |
+| ------------------------------------ | ---------------------------------------------------------------------------- |
+| `lane-cli intents`                   | List active purchase intents, newest first (read-only).                      |
+| `lane-cli intent status <lint_*>`    | List the mandates under an intent and their state (`active`, `used`), with a hint at the next pending mandate. |
+
+<Warning>
+  The interactive purchase itself does **not** run through the CLI. Drafting,
+  approval, and checkout go through the [`lane-mcp` tools](/plugin/reference/mcp-tools)
+  — not `lane-cli pay`, `lane-cli confirm`, or `lane-cli request` (those are
+  legacy / non-interactive paths).
+</Warning>

@@ -1,0 +1,80 @@
+---
+title: Intents, mandates & orders
+description: "The one model both Lane surfaces share: an intent is the authorization, each mandate is a single merchant checkout, and an order is that checkout being carried out."
+---
+
+Every purchase Lane makes is organized the same way, whether it comes from the
+Claude Code plugin or the Managed Checkout API. Three terms describe it.
+
+## The model
+
+<CardGroup cols={3}>
+  <Card title="Intent" icon="file-signature">
+    The authorization a buyer approves once — what may be bought and the spending
+    limit. One per errand, not one per item.
+  </Card>
+  <Card title="Mandate" icon="cart-shopping">
+    A single approved purchase at **one merchant**, drawn against the intent.
+    Items from the same merchant share a mandate.
+  </Card>
+  <Card title="Order" icon="store">
+    A mandate being carried out at the merchant — find the product, cart, sign
+    in, pay, confirm. The order *is* the mandate's merchant checkout.
+  </Card>
+</CardGroup>
+
+In short: **an intent carries a budget; each mandate is one merchant checkout;
+the order is that checkout being run.**
+
+## The three rules
+
+<Steps>
+  <Step title="One intent per errand">
+    A purchase intent is the container the buyer authorizes once. Never create
+    one intent per item. "Buy a tent, a backpack, and s'mores supplies" is **one
+    intent** with a total spending ceiling — not three. Multiple intents mean
+    multiple approvals and a fragmented record.
+  </Step>
+  <Step title="One mandate per merchant">
+    Each mandate covers exactly one merchant, scoped as granularly as possible.
+    Items from the same merchant stay in one mandate; items from different
+    merchants become separate mandates inside the same intent.
+  </Step>
+  <Step title="Lane carries out each mandate">
+    Once the intent is authorized, Lane runs the checkout for every mandate — at
+    the real merchant, in a real browser, on Lane's infrastructure. The buyer
+    never pastes a card.
+  </Step>
+</Steps>
+
+### How a purchase maps to mandates
+
+| Purchase                                  | Shape                          |
+| ----------------------------------------- | ------------------------------ |
+| 1 item at REI                             | 1 intent, 1 mandate            |
+| 2 items at REI                            | 1 intent, 1 mandate (2 items)  |
+| 1 item at REI + 1 item at Amazon          | 1 intent, 2 mandates           |
+| 3 items across 3 merchants                | 1 intent, 3 mandates           |
+
+## How each surface expresses this
+
+The model is the same; each surface uses the word its user works with.
+
+<CardGroup cols={2}>
+  <Card title="Claude Code Plugin" icon="terminal" href="/plugin/purchase-flow">
+    Speaks in **intents and mandates**. The buyer authorizes an intent with a
+    passkey; Lane then checks out each mandate. See the
+    [purchase flow](/plugin/purchase-flow).
+  </Card>
+  <Card title="Managed Checkout API" icon="code" href="/api/overview">
+    Speaks in **orders**. Each `POST /orders` call is one merchant checkout (a
+    mandate); the standing **spending authorization** you set during setup is the
+    intent-level budget. See the [API overview](/api/overview).
+  </Card>
+</CardGroup>
+
+<Note>
+  The Managed Checkout API exposes orders and an account-level spending
+  authorization directly — you don't create an `intent` object by hand. The
+  authorization is the intent; each order is a mandate.
+</Note>

@@ -1,0 +1,84 @@
+---
+title: Installation
+description: "Add the Lane plugin to Claude Code from Lane's official repository."
+---
+
+Lane is the official Claude Code plugin for agentic commerce, published by
+[Lane Technologies](https://getonlane.com). It bundles the Lane skills, the
+hosted `lane-mcp` server, and an auto-installer for the `@getonlane/lane-cli`
+binary.
+
+<Note>
+  **Provenance.** `github.com/Lane-Technologies-Inc/lane-plugin` is Lane's
+  official distribution. It is not listed in any public plugin directory — you
+  install it by pointing Claude Code straight at the repo. `/plugin marketplace
+  add` simply reads the manifest from there; it does not publish anything or pull
+  from an app store. The repo is also a Claude Code **plugin marketplace** named
+  `lane-cli` containing one plugin, `lane`.
+</Note>
+
+## Option A — from the repo (recommended)
+
+```text
+/plugin marketplace add Lane-Technologies-Inc/lane-plugin
+/plugin install lane@lane-cli
+```
+
+Use the repo URL or a local clone path instead of the `owner/repo` shorthand if
+you're hosting it elsewhere:
+
+```text
+/plugin marketplace add /path/to/lane-plugin
+```
+
+## Option B — from a downloaded copy
+
+Unzip `lane-plugin.zip`, then either add it as a marketplace:
+
+```text
+/plugin marketplace add /absolute/path/to/lane-plugin
+/plugin install lane@lane-cli
+```
+
+…or load the plugin directly without a marketplace:
+
+```bash
+claude --plugin-dir /absolute/path/to/lane-plugin/plugins/lane
+```
+
+## What you approve on install
+
+Because the plugin handles real payment credentials, Claude Code asks you to
+approve two things it ships — both defined in plain sight in the repo:
+
+<CardGroup cols={2}>
+  <Card title="A SessionStart hook" icon="terminal">
+    `plugins/lane/hooks/install-check.mjs` installs the `@getonlane/lane-cli`
+    binary via npm if it isn't already on your PATH. It installs nothing else.
+  </Card>
+  <Card title="One MCP server" icon="server">
+    `lane-mcp`, declared in `plugins/lane/.claude-plugin/plugin.json`, makes
+    authenticated HTTPS calls to Lane's hosted endpoint. It is not a local
+    process.
+  </Card>
+</CardGroup>
+
+Reviewing both before approving is the whole point of installing from Lane's own
+repository rather than a third party.
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="First-time setup" icon="user-plus" href="/plugin/setup">
+    Sign in, add a card, and sync your API key.
+  </Card>
+  <Card title="Make a purchase" icon="cart-shopping" href="/plugin/quickstart">
+    Say what you want to buy and approve it with a passkey.
+  </Card>
+</CardGroup>
+
+<Note>
+  **Leave the API key blank at install.** The plugin authenticates with your Lane
+  API key, but you don't enter it by hand — the setup flow fills it in
+  automatically after `lane-cli init`. See [Setup](/plugin/setup).
+</Note>

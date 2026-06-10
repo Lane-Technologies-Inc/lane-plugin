@@ -1,0 +1,6 @@
+plugins/
+scripts/
+LICENSE
+*.mjs
+*.sh
+*.ps1
