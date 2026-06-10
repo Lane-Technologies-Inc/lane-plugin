@@ -32,23 +32,23 @@ Two parties: the **Agent Platform** (your agent or app) passes the order details
 to **Lane** over the API, and Lane runs the checkout at the merchant on your
 behalf.
 
-```
-Agent Platform                   Lane                         Merchant
---------------                   ----                         --------
-  POST /agent/v1/orders          |                            |
-  { instruction, ship_to, ... }  |                            |
-  +----------------------------->|                            |
-        202 { order_id }         |                            |
-  <-----------------------------+|                            |
-        |                        |  finds product, adds to     |
-        |                        |  cart, signs in, pays,      |
-        |                        |  confirms                   |
-        |                        +--------------------------->|
-        |                        |<---------------------------+
-        |  webhook: order.completed                            |
-  <-----------------------------+|                            |
-        |  { order_number, amount_charged, tracking }          |
-        v                        |                            |
+```mermaid
+sequenceDiagram
+    autonumber
+    participant A as Agent Platform
+    participant L as Lane
+    participant M as Merchant
+
+    A->>L: POST /agent/v1/orders { instruction, ship_to, ... }
+    L-->>A: 202 { order_id }
+
+    rect rgb(246, 246, 246)
+    Note over L,M: Runs on Lane's servers (a few minutes)
+    L->>M: Find product, add to cart, sign in, pay, confirm
+    M-->>L: Order confirmed
+    end
+
+    L-->>A: webhook order.completed { order_number, amount_charged, tracking }
 ```
 
 Everything between the `202` and the `order.completed` webhook happens on Lane's
