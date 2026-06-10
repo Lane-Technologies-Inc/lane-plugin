@@ -4,9 +4,29 @@
   "name": "Lane",
   "description": "Agent-native payments: draft a purchase, approve it, and let Lane complete the merchant checkout — in Claude Code or over a headless API.",
   "colors": {
-    "primary": "#0B5FFF",
-    "light": "#4D8BFF",
-    "dark": "#0B5FFF"
+    "primary": "#1201FF",
+    "light": "#4D3DFF",
+    "dark": "#1201FF"
+  },
+  "background": {
+    "color": {
+      "light": "#F6F6F6",
+      "dark": "#000000"
+    }
+  },
+  "fonts": {
+    "heading": {
+      "family": "At Aero",
+      "weight": 700,
+      "source": "/fonts/at-aero-bold.woff2",
+      "format": "woff2"
+    },
+    "body": {
+      "family": "At Aero",
+      "weight": 400,
+      "source": "/fonts/at-aero-regular.woff2",
+      "format": "woff2"
+    }
   },
   "favicon": "/favicon.svg",
   "navigation": {
