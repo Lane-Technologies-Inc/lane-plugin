@@ -42,5 +42,5 @@ not treat it as a generally-available production service yet.
 
 ## Reporting a vulnerability
 
-Email **agentic@getonlane.com** with details. Please do not open public issues
+Email **team@getonlane.com** with details. Please do not open public issues
 for security reports.

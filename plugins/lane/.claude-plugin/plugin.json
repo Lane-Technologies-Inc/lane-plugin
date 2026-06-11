@@ -3,7 +3,7 @@
   "description": "Agent-native payments in Claude Code: draft a purchase intent, approve it with a passkey, then let Lane drive the merchant checkout autonomously. Bundles the Lane skills + the single lane-mcp server, and auto-installs the Lane CLI.",
   "author": {
     "name": "Lane",
-    "email": "agentic@getonlane.com",
+    "email": "team@getonlane.com",
     "url": "https://getonlane.com"
   },
   "homepage": "https://getonlane.com/",
