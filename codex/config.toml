@@ -1,0 +1,43 @@
+#
+# Lane for Codex -- copy this block into ~/.codex/config.toml
+#
+# Prerequisite: export LANE_API_KEY in the shell that launches Codex.
+#   npm i -g @getonlane/lane-cli && lane-cli init
+#   export LANE_API_KEY="lane_..."      # from ~/.lane/config.json -> "apiKey"
+#
+# The key is a SPENDING credential. It stays in an env var on purpose --
+# `bearer_token_env_var` exists so it never lands in this file.
+#
+# See ./README.md for the tool list, the approval flow, non-prod stages,
+# and troubleshooting.
+#
+[mcp_servers.lane]
+url = "https://mcp.getonlane.com/mcp"
+bearer_token_env_var = "LANE_API_KEY"
+
+# Tells Lane where the agent runs, which selects how approval is captured.
+# `codex` resolves to the `rich` family: terms open in the browser wallet.
+# Rendering hint only -- it cannot unlock a weaker approval (that is enforced
+# server-side against the API key's wallet identity).
+http_headers = { "X-Lane-Surface" = "codex" }
+
+# Both raised from Codex's defaults (10s / 60s) deliberately:
+#   startup -- a cold Fargate task must answer the MCP `initialize` handshake.
+#   tool    -- a `get_session_status` long-poll clamps to 25s server-side and so
+#              fits in 60s, but `find_products` (merchant scrape, possibly a SERP
+#              fallback) and `start_session` on a cold browser can exceed it.
+startup_timeout_sec = 30
+tool_timeout_sec = 120
+
+# OPTIONAL. lane-mcp exposes 22 tools; these 13 cover the whole purchase path
+# (find -> draft -> approve -> run -> poll -> answer -> close). Uncomment to keep
+# the other 9 out of your context. Omits the org-card, credits, travel and
+# reservation tools, plus `intent_test_approve` (a dry run that does not
+# authorize a real purchase).
+#
+# enabled_tools = [
+#   "intent_submit", "intent_get_terms", "intent_approve", "intent_get_status",
+#   "intent_list", "edit_lane_intent", "intent_cancel_mandate",
+#   "find_products", "start_session", "get_session_status", "resume_session",
+#   "intent_ask_human", "end_session",
+# ]
